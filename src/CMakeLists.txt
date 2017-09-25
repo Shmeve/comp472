@@ -1,0 +1,10 @@
+set(SOURCE_FILES
+    # Source files here...
+    main.cpp
+    )
+
+# Create the console game executable
+add_executable(comp472 ${SOURCE_FILES})
+
+# Mark this directory as a root directory for future includes
+target_include_directories(comp472 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
