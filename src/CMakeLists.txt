@@ -1,6 +1,14 @@
 set(SOURCE_FILES
     # Source files here...
     main.cpp
+    Board.cpp
+    Board.h
+    GameManager.cpp
+    GameManager.h
+    HumanPlayer.cpp
+    HumanPlayer.h
+    Move.h
+    Player.h
     )
 
 # Create the console game executable
