@@ -10,6 +10,13 @@ Board::Board(int size)
 {
     mSize = size;
     mCells = new int[mSize];
+
+    mCells[mSize / 2] = 0;
+    for (int i = 0; i < mSize / 2; i++)
+    {
+        mCells[i] = 1;
+        mCells[i + 1 + (mSize / 2)] = 2;
+    }
 }
 
 Board::~Board()

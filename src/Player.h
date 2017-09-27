@@ -2,7 +2,7 @@
 
 class Player
 {
-private:
+protected:
     bool mIsPlayerOne;
 public:
     Player() {};

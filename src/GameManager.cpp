@@ -10,7 +10,7 @@ GameManager* GameManager::mInstance(nullptr);
 GameManager::GameManager() : mConsecutiveNoAttack(0), mRow(5), mCol(9)
 {
     mBoardSize = mRow * mCol;
-    mBoard = Board(mBoard);
+    mBoard = Board(mBoardSize);
     mTokens[0] = 22;
     mTokens[1] = 22;
 }

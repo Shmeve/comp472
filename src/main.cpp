@@ -16,15 +16,26 @@ int main(int argc, char** argv)
     while (true)
     {
         Move p1Move = players[0]->GetMove();
-        if (GameManager::GetInstance()->IsValidMove(p1Move, true))
-            outcome = GameManager::GetInstance()->PlayMove(p1Move, 2);
+        while (!GameManager::GetInstance()->IsValidMove(p1Move, true))
+        {
+            std::cout << "Invalid move!\n";
+            p1Move = players[0]->GetMove();
+        }
+
+        outcome = GameManager::GetInstance()->PlayMove(p1Move, 2);
 
         if (outcome != GameManager::Outcome::None)
             break;
 
+        // TODO: If AI makes mistake, LOSE
         Move p2Move = players[1]->GetMove();
-        if (GameManager::GetInstance()->IsValidMove(p2Move, false))
-            outcome = GameManager::GetInstance()->PlayMove(p1Move, 1);
+        while (!GameManager::GetInstance()->IsValidMove(p2Move, false))
+        {
+            std::cout << "Invalid move!\n";
+            p2Move = players[1]->GetMove();
+        }
+
+        outcome = GameManager::GetInstance()->PlayMove(p1Move, 1);
 
         if (outcome != GameManager::Outcome::None)
             break;

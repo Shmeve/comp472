@@ -13,6 +13,7 @@ Move HumanPlayer::GetMove()
 
     auto rowSearch = rows.begin();
     do {
+        std::cout << (mIsPlayerOne ? "Player 1: " : "Player 2: ");
         std::cout << "Enter the start cell: \n";
         std::cin >> startString;
 
@@ -20,7 +21,8 @@ Move HumanPlayer::GetMove()
     } while (startString.length() != 2 || rowSearch == rows.end() || startString[1] - '0' > 9 || startString[1] - '0' < 1);
 
     do {
-        std::cout << "\nEnter the end cell: \n";
+        std::cout << (mIsPlayerOne ? "Player 1: " : "Player 2: ");
+        std::cout << "Enter the end cell: \n";
         std::cin >> endString;
 
         rowSearch = rows.find(toupper(endString[0]));
