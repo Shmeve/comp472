@@ -24,7 +24,7 @@ public:
     };
 
     ~GameManager();
-    GameManager* GetInstance();
+    static GameManager* GetInstance();
 
     Outcome EvaluateWinningCondition();
     bool IsValidMove(const Move& move, bool playerOne);
