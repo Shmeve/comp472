@@ -10,13 +10,14 @@ GameManager* GameManager::mInstance(nullptr);
 GameManager::GameManager() : mConsecutiveNoAttack(0), mRow(5), mCol(9)
 {
     mBoardSize = mRow * mCol;
-    mBoard = Board(mBoardSize);
+    mBoard = new Board(mBoardSize);
     mTokens[0] = 22;
     mTokens[1] = 22;
 }
 
 GameManager::~GameManager()
 {
+    delete mBoard;
     delete mInstance;
 }
 
@@ -53,8 +54,8 @@ bool GameManager::IsValidMove(const Move& move, bool playerOne)
 
     //Check that the start cell has the player's token and the end cell is empty
     //Assuming: 0 -> empty, 1 -> playerOne, 2-> playerTwo
-    int startPlayer = mBoard.GetPlayer(move.mStartPos);
-    int endPlayer = mBoard.GetPlayer(move.mEndPos);
+    int startPlayer = mBoard->GetPlayer(move.mStartPos);
+    int endPlayer = mBoard->GetPlayer(move.mEndPos);
 
     if (endPlayer != 0)
         return false;
@@ -75,10 +76,10 @@ bool GameManager::IsValidMove(const Move& move, bool playerOne)
     set<int> blackMoves = { 1, mCol - 1, mCol, mCol + 1 };
     set<int> whiteMoves = { 1, mCol };
 
-    auto blackSearch = blackMoves.find(move.mStartPos);
-    auto whiteSearch = whiteMoves.find(move.mStartPos);
+    auto blackSearch = blackMoves.find(absDirection);
+    auto whiteSearch = whiteMoves.find(absDirection);
 
-    bool isBlack = mBoard.IsBlack(move.mStartPos);
+    bool isBlack = mBoard->IsBlack(move.mStartPos);
 
     if (isBlack && blackSearch == blackMoves.end())
         return false;
@@ -114,10 +115,10 @@ void GameManager::Attack(const Move& move, int opponent)
     int direction = move.mEndPos - move.mStartPos;
 
     //Forward attack
-    if (mBoard.GetPlayer(move.mStartPos + 2 * direction) == opponent)
+    if (mBoard->GetPlayer(move.mStartPos + 2 * direction) == opponent)
         Eliminate(move.mStartPos, direction, opponent);
     //Backward attack
-    else if (mBoard.GetPlayer(move.mStartPos - 2 * direction) == opponent)
+    else if (mBoard->GetPlayer(move.mStartPos - 2 * direction) == opponent)
         Eliminate(move.mStartPos, -direction, opponent);
     //Defensive move
     else
@@ -140,9 +141,9 @@ int GameManager::Eliminate(int currentPos, int direction, int opponent)
         return 0;
 
     //If desired attack position has an opponent, attack and keep going
-    if (mBoard.GetPlayer(desiredEnd) == opponent)
+    if (mBoard->GetPlayer(desiredEnd) == opponent)
     {
-        mBoard.Clear(desiredEnd);
+        mBoard->Clear(desiredEnd);
         mTokens[opponent - 1]--;
         currentPos += direction;
         return Eliminate(currentPos, direction, opponent) + 1;
@@ -154,5 +155,5 @@ int GameManager::Eliminate(int currentPos, int direction, int opponent)
 
 void GameManager::GetBoard(int* board)
 {
-    board = mBoard.GetCells();
+    board = mBoard->GetCells();
 }

@@ -8,7 +8,7 @@ private:
     int mCol;
     int mRow;
     int mBoardSize;
-    Board mBoard;
+    Board* mBoard;
     int mTokens[2];
     int mConsecutiveNoAttack;
 
