@@ -11,5 +11,5 @@ public:
     inline bool IsBlack(int idx) { return idx % 2 == 0; }
     int GetPlayer(int idx);
     void Clear(int idx);
-    void MoveTo(int from, int to);
+    void Move(int from, int to);
 };

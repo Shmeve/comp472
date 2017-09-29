@@ -36,7 +36,7 @@ void Board::Clear(int idx)
     mCells[idx] = 0;
 }
 
-void Board::MoveTo(int from, int to)
+void Board::Move(int from, int to)
 {
     mCells[to] = mCells[from];
     mCells[from] = 0;

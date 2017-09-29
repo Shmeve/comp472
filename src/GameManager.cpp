@@ -102,6 +102,8 @@ GameManager::Outcome GameManager::PlayMove(const Move& move, int opponent)
 
     Attack(move, opponent);
 
+    mBoard->Move(move.mStartPos, move.mEndPos);
+
     outcome = EvaluateWinningCondition();
 
     if (outcome == None && mConsecutiveNoAttack >= 10)
@@ -116,10 +118,10 @@ void GameManager::Attack(const Move& move, int opponent)
 
     //Forward attack
     if (mBoard->GetPlayer(move.mStartPos + 2 * direction) == opponent)
-        Eliminate(move.mStartPos, direction, opponent);
+        Eliminate(move.mEndPos, direction, opponent);
     //Backward attack
     else if (mBoard->GetPlayer(move.mStartPos - 2 * direction) == opponent)
-        Eliminate(move.mStartPos, -direction, opponent);
+        Eliminate(move.mEndPos, -direction, opponent);
     //Defensive move
     else
         mConsecutiveNoAttack++;
