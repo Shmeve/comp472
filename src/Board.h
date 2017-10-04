@@ -1,13 +1,15 @@
 #pragma once
 
+#define BOARD_ROWS 5
+#define BOARD_COLS 9
+
 class Board
 {
 private:
     int* mCells;
-    int mSize;
+    const int mSize;
 public:
     Board();
-    Board(int size);
     ~Board();
     inline int* GetCells() { return mCells; }
     inline bool IsBlack(int idx) { return idx % 2 == 0; }

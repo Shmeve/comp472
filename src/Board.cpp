@@ -1,14 +1,7 @@
 #include "Board.h"
 
-Board::Board()
+Board::Board() : mSize(BOARD_ROWS * BOARD_COLS)
 {
-    mSize = 1;
-    mCells = new int[1];
-}
-
-Board::Board(int size)
-{
-    mSize = size;
     mCells = new int[mSize];
 
     mCells[mSize / 2] = 0;
