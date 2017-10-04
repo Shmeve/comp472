@@ -16,4 +16,5 @@ public:
     int GetPlayer(int idx);
     void Clear(int idx);
     void Move(int from, int to);
+    void SetCell(const int& idx, const int& val);
 };

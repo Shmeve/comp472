@@ -1,10 +1,21 @@
 #include <iostream>
+#include <curses.h>
+#include <string.h>
 
+#include "UI.h"
 #include "HumanPlayer.h"
 #include "GameManager.h"
 
 int main(int argc, char** argv)
 {
+    // wait to attach debugger
+    if (argc > 1 && strncmp(argv[1], "--wait", 6) == 0) {
+        getchar();
+    }
+
+    UI* ui = UI::getInstance();
+    ui->init();
+
     //Game Setup
     Player** players = new Player*[2];
 
@@ -12,13 +23,15 @@ int main(int argc, char** argv)
     players[0] = new HumanPlayer(true);
     players[1] = new HumanPlayer(false);
 
+    GameManager* gameManager = GameManager::GetInstance();
+
     GameManager::Outcome outcome = GameManager::Outcome::None;
     while (true)
     {
         Move p1Move = players[0]->GetMove();
         while (!GameManager::GetInstance()->IsValidMove(p1Move, true))
         {
-            std::cout << "Invalid move!\n";
+            ui->message("Invalid move!", true);
             p1Move = players[0]->GetMove();
         }
 
@@ -31,7 +44,7 @@ int main(int argc, char** argv)
         Move p2Move = players[1]->GetMove();
         while (!GameManager::GetInstance()->IsValidMove(p2Move, false))
         {
-            std::cout << "Invalid move!\n";
+            ui->message("Invalid move!", true);
             p2Move = players[1]->GetMove();
         }
 

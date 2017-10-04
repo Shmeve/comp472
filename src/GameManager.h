@@ -33,5 +33,4 @@ public:
     Outcome PlayMove(const Move& move, int opponent);
     void Attack(const Move& move, int opponent);
     int Eliminate(int currentPos, int direction, int opponent);
-    void GetBoard(int* board);
 };

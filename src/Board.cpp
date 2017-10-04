@@ -1,14 +1,15 @@
 #include "Board.h"
+#include "UI.h"
 
 Board::Board() : mSize(BOARD_ROWS * BOARD_COLS)
 {
     mCells = new int[mSize];
 
-    mCells[mSize / 2] = 0;
+    SetCell(mSize / 2, 0);
     for (int i = 0; i < mSize / 2; i++)
     {
-        mCells[i] = 1;
-        mCells[i + 1 + (mSize / 2)] = 2;
+        SetCell(i, 1);
+        SetCell(i + 1 + (mSize / 2), 2);
     }
 }
 
@@ -26,11 +27,17 @@ int Board::GetPlayer(int idx)
 
 void Board::Clear(int idx)
 {
-    mCells[idx] = 0;
+    SetCell(idx, 0);
 }
 
 void Board::Move(int from, int to)
 {
     mCells[to] = mCells[from];
     mCells[from] = 0;
+}
+
+void Board::SetCell(const int& idx, const int& val)
+{
+	mCells[idx] = val;
+	UI::getInstance()->setCell(idx / BOARD_COLS, idx % BOARD_COLS, val);
 }

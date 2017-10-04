@@ -9,7 +9,8 @@ set(SOURCE_FILES
     HumanPlayer.h
     Move.h
     Player.h
-    )
+    UI.cpp
+    UI.h)
 
 # Create the console game executable
 add_executable(comp472 ${SOURCE_FILES})
