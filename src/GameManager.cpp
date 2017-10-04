@@ -120,8 +120,8 @@ void GameManager::Attack(const Move& move, int opponent)
     if (mBoard->GetPlayer(move.mStartPos + 2 * direction) == opponent)
         Eliminate(move.mEndPos, direction, opponent);
     //Backward attack
-    else if (mBoard->GetPlayer(move.mStartPos - 2 * direction) == opponent)
-        Eliminate(move.mEndPos, -direction, opponent);
+    else if (mBoard->GetPlayer(move.mStartPos - direction) == opponent)
+        Eliminate(move.mStartPos, -direction, opponent);
     //Defensive move
     else
         mConsecutiveNoAttack++;
