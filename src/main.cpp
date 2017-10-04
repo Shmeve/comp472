@@ -48,7 +48,7 @@ int main(int argc, char** argv)
             p2Move = players[1]->GetMove();
         }
 
-        outcome = GameManager::GetInstance()->PlayMove(p1Move, 1);
+        outcome = GameManager::GetInstance()->PlayMove(p2Move, 1);
 
         if (outcome != GameManager::Outcome::None)
             break;
