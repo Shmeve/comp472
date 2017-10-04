@@ -53,6 +53,18 @@ UI* UI::getInstance()
 
 void UI::init()
 {
+#if defined(__unix__) || defined(__APPLE__)
+    printf("\033]2;Armadillo\a");
+#elif _WIN32
+    {
+        PDC_set_title("Armadillo");
+        char* cmd = new char[100];
+        sprintf(cmd, "mode con cols=%d lines=%d", BOARD_W + LOG_W, BOARD_H + INPUT_H);
+        system(cmd);
+        delete[] cmd;
+    }
+#endif
+
     // init curses window
     setlocale(LC_ALL, "");
     initscr();
@@ -180,29 +192,32 @@ void UI::setCell(const int& y, const int& x, const int& val)
 
 std::string UI::getMove(const bool& playerOne)
 {
-    std::string move;
+    std::string move(4, ' ');
 
     eraseWindow(mInputWindow);
     mvwaddstr(mInputWindow, 0, 1, "Command");
     mvwprintw(mInputWindow, INPUT_B, INPUT_B, "P%i's move: ", 2 - playerOne);
     wrefresh(mInputWindow);
 
-    bool rowMode = true;
     int i = 0;
 
     while (i < 4) {
+        bool rowMode = i % 2 == 0;
         bool accepted = false;
         int ch = wgetch(mInputWindow);
 
-        if (rowMode && ((ch >= 'a' && ch <= 'a' + BOARD_ROWS) || (ch >= 'A' && ch <= 'A' + BOARD_ROWS))) {
+        if (i > 0 && (ch == KEY_BACKSPACE || ch == 127)) {
+            mvwaddch(mInputWindow, getcury(mInputWindow), getcurx(mInputWindow) - 1 - (i == 2), ' ');
+            wmove(mInputWindow, getcury(mInputWindow), getcurx(mInputWindow) - 1);
+            --i;
+        } else if (rowMode && ((ch >= 'a' && ch < 'a' + BOARD_ROWS) || (ch >= 'A' && ch < 'A' + BOARD_ROWS))) {
             ch = toupper(ch);
             accepted = true;
-        } else if (!rowMode && (ch >= '0' && ch <= '0' + BOARD_COLS)) {
+        } else if (!rowMode && (ch >= '1' && ch < '1' + BOARD_COLS)) {
             accepted = true;
         }
 
         if (accepted) {
-            rowMode = !rowMode;
             move[i] = static_cast<char>(ch);
             waddch(mInputWindow, static_cast<const chtype>(ch));
 
