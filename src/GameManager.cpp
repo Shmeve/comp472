@@ -1,4 +1,5 @@
 #include "GameManager.h"
+#include <cmath>
 
 #include <set>
 
