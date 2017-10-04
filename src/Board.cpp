@@ -5,11 +5,21 @@ Board::Board() : mSize(BOARD_ROWS * BOARD_COLS)
 {
     mCells = new int[mSize];
 
-    SetCell(mSize / 2, 0);
-    for (int i = 0; i < mSize / 2; i++)
+    SetCell(mSize / 2, 0); // middle cell is empty
+    for (int i = 0; i < mSize; ++i)
     {
-        SetCell(i, 1);
-        SetCell(i + 1 + (mSize / 2), 2);
+        int row = i / BOARD_COLS, col = i % BOARD_COLS;
+
+        if (row < BOARD_ROWS / 2) {
+            // player 1 rows
+            SetCell(i, 1);
+        } else if (row == BOARD_ROWS / 2 && col != BOARD_COLS / 2) {
+            // middle row -- first half is player 2, 2nd half is player 1
+            SetCell(i, 1 + (col < BOARD_COLS / 2));
+        } else if (row > BOARD_ROWS / 2) {
+            // player 2 rows
+            SetCell(i, 2);
+        }
     }
 }
 
