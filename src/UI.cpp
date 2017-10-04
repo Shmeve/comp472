@@ -148,12 +148,12 @@ void UI::setCell(const int& y, const int& x, const int& val)
     wrefresh(mBoardWindow);
 }
 
-std::string UI::getMove()
+std::string UI::getMove(const bool& playerOne)
 {
     std::string move;
 
     eraseWindow(mInputWindow);
-    mvwaddstr(mInputWindow, INPUT_B, INPUT_B, "Move: ");
+    mvwprintw(mInputWindow, INPUT_B, INPUT_B, "P%i's move: ", 2 - playerOne);
     wrefresh(mInputWindow);
 
     bool rowMode = true;

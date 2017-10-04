@@ -37,6 +37,6 @@ public:
     void setCell(const int& y, const int& x, const int& val);
 
     // input ops
-    std::string getMove();
+    std::string getMove(const bool& playerOne);
     void message(const std::string& m, const bool& pause);
 };
