@@ -9,10 +9,14 @@ set(SOURCE_FILES
     HumanPlayer.h
     Move.h
     Player.h
-    )
+    UI.cpp
+    UI.h)
 
 # Create the console game executable
 add_executable(comp472 ${SOURCE_FILES})
+
+# Link required libraries
+target_link_libraries(comp472 ${LIBRARIES})
 
 # Mark this directory as a root directory for future includes
 target_include_directories(comp472 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

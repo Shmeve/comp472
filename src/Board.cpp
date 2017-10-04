@@ -1,21 +1,25 @@
 #include "Board.h"
+#include "UI.h"
 
-Board::Board()
+Board::Board() : mSize(BOARD_ROWS * BOARD_COLS)
 {
-    mSize = 1;
-    mCells = new int[1];
-}
-
-Board::Board(int size)
-{
-    mSize = size;
     mCells = new int[mSize];
 
-    mCells[mSize / 2] = 0;
-    for (int i = 0; i < mSize / 2; i++)
+    SetCell(mSize / 2, 0); // middle cell is empty
+    for (int i = 0; i < mSize; ++i)
     {
-        mCells[i] = 1;
-        mCells[i + 1 + (mSize / 2)] = 2;
+        int row = i / BOARD_COLS, col = i % BOARD_COLS;
+
+        if (row < BOARD_ROWS / 2) {
+            // player 1 rows
+            SetCell(i, 1);
+        } else if (row == BOARD_ROWS / 2 && col != BOARD_COLS / 2) {
+            // middle row -- first half is player 2, 2nd half is player 1
+            SetCell(i, 1 + (col < BOARD_COLS / 2));
+        } else if (row > BOARD_ROWS / 2) {
+            // player 2 rows
+            SetCell(i, 2);
+        }
     }
 }
 
@@ -33,11 +37,17 @@ int Board::GetPlayer(int idx)
 
 void Board::Clear(int idx)
 {
-    mCells[idx] = 0;
+    SetCell(idx, 0);
 }
 
 void Board::Move(int from, int to)
 {
-    mCells[to] = mCells[from];
-    mCells[from] = 0;
+    SetCell(to, mCells[from]);
+    SetCell(from, 0);
+}
+
+void Board::SetCell(const int& idx, const int& val)
+{
+	mCells[idx] = val;
+	UI::getInstance()->setCell(idx / BOARD_COLS, idx % BOARD_COLS, val);
 }

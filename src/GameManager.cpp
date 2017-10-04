@@ -1,16 +1,16 @@
 #include "GameManager.h"
+#include <cmath>
 
-#include <stdlib.h>
 #include <set>
 
 using namespace std;
 
 GameManager* GameManager::mInstance(nullptr);
 
-GameManager::GameManager() : mConsecutiveNoAttack(0), mRow(5), mCol(9)
+GameManager::GameManager() : mConsecutiveNoAttack(0), mRow(BOARD_ROWS), mCol(BOARD_COLS)
 {
     mBoardSize = mRow * mCol;
-    mBoard = new Board(mBoardSize);
+    mBoard = new Board();
     mTokens[0] = 22;
     mTokens[1] = 22;
 }
@@ -153,9 +153,4 @@ int GameManager::Eliminate(int currentPos, int direction, int opponent)
 
     //If attacked cell does not hold an opponent, we are done
     return 0;
-}
-
-void GameManager::GetBoard(int* board)
-{
-    board = mBoard->GetCells();
 }

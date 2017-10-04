@@ -1,4 +1,6 @@
 #include "HumanPlayer.h"
+#include "UI.h"
+#include "Board.h"
 
 #include <iostream>
 #include <string>
@@ -6,27 +8,7 @@
 
 Move HumanPlayer::GetMove()
 {
-    std::set<char> rows = { 'A', 'B', 'C', 'D', 'E' };
+    std::string moveStr = UI::getInstance()->getMove(mIsPlayerOne);
 
-    std::string startString;
-    std::string endString;
-
-    auto rowSearch = rows.begin();
-    do {
-        std::cout << (mIsPlayerOne ? "Player 1: " : "Player 2: ");
-        std::cout << "Enter the start cell: \n";
-        std::cin >> startString;
-
-        rowSearch = rows.find(toupper(startString[0]));
-    } while (startString.length() != 2 || rowSearch == rows.end() || startString[1] - '0' > 9 || startString[1] - '0' < 1);
-
-    do {
-        std::cout << (mIsPlayerOne ? "Player 1: " : "Player 2: ");
-        std::cout << "Enter the end cell: \n";
-        std::cin >> endString;
-
-        rowSearch = rows.find(toupper(endString[0]));
-    } while (endString.length() != 2 || rowSearch == rows.end() || endString[1] - '0' > 9 || endString[1] - '0' < 1);
-
-    return Move(9 * (toupper(startString[0]) - 'A') + (startString[1] - '0') - 1, 9 * (toupper(endString[0]) - 'A') + (endString[1] - '0') - 1);
+    return {BOARD_COLS * (toupper(moveStr[0]) - 'A') + (moveStr[1] - '0') - 1, BOARD_COLS * (toupper(moveStr[2]) - 'A') + (moveStr[3] - '0') - 1};
 }
