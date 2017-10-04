@@ -1,6 +1,5 @@
 #include "GameManager.h"
 
-#include <stdlib.h>
 #include <set>
 
 using namespace std;
@@ -153,9 +152,4 @@ int GameManager::Eliminate(int currentPos, int direction, int opponent)
 
     //If attacked cell does not hold an opponent, we are done
     return 0;
-}
-
-void GameManager::GetBoard(int* board)
-{
-    board = mBoard->GetCells();
 }
