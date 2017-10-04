@@ -32,8 +32,8 @@ void Board::Clear(int idx)
 
 void Board::Move(int from, int to)
 {
-    mCells[to] = mCells[from];
-    mCells[from] = 0;
+    SetCell(to, mCells[from]);
+    SetCell(from, 0);
 }
 
 void Board::SetCell(const int& idx, const int& val)
