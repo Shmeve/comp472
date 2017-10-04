@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Move.h"
 
 class Player
