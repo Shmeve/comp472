@@ -15,6 +15,12 @@ const int INPUT_W = BOARD_W;
 const int INPUT_X = 0;
 const int INPUT_Y = BOARD_H;
 
+const int LOG_B = 1;
+const int LOG_H = BOARD_H + INPUT_H /*height*/;
+const int LOG_W = 9 /*width*/ + LOG_B * 2 /*border*/;
+const int LOG_X = BOARD_W;
+const int LOG_Y = 0;
+
 UI* UI::mInstance = nullptr;
 
 UI::UI()
@@ -29,6 +35,10 @@ UI::~UI()
 
     if (mInputWindow != nullptr) {
         destroyWindow(mInputWindow);
+    }
+
+    if (mLogWindow != nullptr) {
+        destroyWindow(mLogWindow);
     }
 }
 
@@ -70,8 +80,11 @@ void UI::init()
 
     refresh();
 
+    /*
+     * board window init
+     */
+
     mBoardWindow = createWindow(BOARD_H, BOARD_W, BOARD_Y, BOARD_X);
-    mInputWindow = createWindow(INPUT_H, INPUT_W, INPUT_Y, INPUT_X);
 
     // draw row marks
     for (int y = 0; y < BOARD_ROWS; ++y) {
@@ -87,7 +100,24 @@ void UI::init()
         mvwaddch(mBoardWindow, BOARD_H - 1, BOARD_B + x * 3 + 1, ch);
     }
 
-    //keypad(mBoardWindow, true);
+    /*
+     * input window init
+     */
+
+    mInputWindow = createWindow(INPUT_H, INPUT_W, INPUT_Y, INPUT_X);
+
+    mvwaddstr(mInputWindow, 0, 1, "Command");
+    wrefresh(mInputWindow);
+
+    /*
+     * log window init
+     */
+
+    mLogWindow = createWindow(LOG_H, LOG_W, LOG_Y, LOG_X);
+
+    mvwaddstr(mLogWindow, 0, 1, "Log");
+    wmove(mLogWindow, LOG_B, LOG_B);
+    wrefresh(mLogWindow);
 }
 
 WINDOW* UI::createWindow(const int& h, const int& w, const int& y, const int& x)
@@ -153,6 +183,7 @@ std::string UI::getMove(const bool& playerOne)
     std::string move;
 
     eraseWindow(mInputWindow);
+    mvwaddstr(mInputWindow, 0, 1, "Command");
     mvwprintw(mInputWindow, INPUT_B, INPUT_B, "P%i's move: ", 2 - playerOne);
     wrefresh(mInputWindow);
 
@@ -197,4 +228,14 @@ void UI::message(const std::string& m, const bool& pause)
     if (pause) {
         wgetch(mInputWindow);
     }
+}
+
+void UI::log(const int& player, const Move& move)
+{
+    wprintw(mLogWindow, "P%i: %c%c %c%c",
+            player,
+            'A' + move.mStartPos / BOARD_COLS, '1' + move.mStartPos % BOARD_COLS,
+            'A' + move.mEndPos / BOARD_COLS, '1' + move.mEndPos % BOARD_COLS);
+    wmove(mLogWindow, getcury(mLogWindow) + 1, LOG_B);
+    wrefresh(mLogWindow);
 }

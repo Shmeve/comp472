@@ -36,6 +36,7 @@ int main(int argc, char** argv)
         }
 
         outcome = GameManager::GetInstance()->PlayMove(p1Move, 2);
+        ui->log(1, p1Move);
 
         if (outcome != GameManager::Outcome::None)
             break;
@@ -49,6 +50,7 @@ int main(int argc, char** argv)
         }
 
         outcome = GameManager::GetInstance()->PlayMove(p2Move, 1);
+        ui->log(2, p2Move);
 
         if (outcome != GameManager::Outcome::None)
             break;

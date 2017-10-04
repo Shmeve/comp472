@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Move.h"
+
 #include <curses.h>
 #include <string>
 
@@ -22,6 +24,7 @@ private:
 
     WINDOW* mBoardWindow = nullptr;
     WINDOW* mInputWindow = nullptr;
+    WINDOW* mLogWindow = nullptr;
 public:
     static UI* getInstance();
     virtual ~UI();
@@ -39,4 +42,7 @@ public:
     // input ops
     std::string getMove(const bool& playerOne);
     void message(const std::string& m, const bool& pause);
+
+    // log ops
+    void log(const int& player, const Move& move);
 };
