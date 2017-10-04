@@ -53,6 +53,18 @@ UI* UI::getInstance()
 
 void UI::init()
 {
+#if defined(__unix__) || defined(__APPLE__)
+    printf("\033]2;Armadillo\a");
+#elif _WIN32
+    {
+        PDC_set_title("Armadillo");
+        char* cmd = new char[100];
+        sprintf(cmd, "mode con cols=%d lines=%d", BOARD_W + LOG_W, BOARD_H + INPUT_H);
+        system(cmd);
+        delete[] cmd;
+    }
+#endif
+
     // init curses window
     setlocale(LC_ALL, "");
     initscr();
