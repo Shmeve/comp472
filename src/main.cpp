@@ -56,6 +56,25 @@ int main(int argc, char** argv)
             break;
     }
 
+    std::string message;
+
+    switch (outcome) {
+        case GameManager::Outcome::Player1Win:
+            message = "Player 1 wins!";
+            break;
+        case GameManager::Outcome::Player2Win:
+            message = "Player 2 wins!";
+            break;
+        case GameManager::Outcome::Draw:
+            message = "It's a draw!";
+            break;
+        default:
+            message = "This isn't good.";
+            break;
+    }
+
+    ui->message(message, true);
+
     return 0;
 }
 
