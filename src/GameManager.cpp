@@ -141,6 +141,7 @@ void GameManager::Attack(const Move& move, int opponent)
 int GameManager::Eliminate(int currentPos, int direction, int opponent)
 {
     int desiredEnd = currentPos + direction;
+    int absDirection = abs(direction);
 
     //Check if desired attack position is on the board
     if (desiredEnd < 0 || desiredEnd > mBoardSize - 1)
@@ -151,6 +152,10 @@ int GameManager::Eliminate(int currentPos, int direction, int opponent)
     if (direction == -1 && currentPos % mCol == 0)
         return 0;
     if (direction == 1 && currentPos % mCol == mCol - 1)
+        return 0;
+
+    // Check to see diagonal attacks only cross 1 column
+    if (absDirection != 1 && absDirection !=9 && abs((desiredEnd % mCol) - (currentPos % mCol)) != 1)
         return 0;
 
     //If desired attack position has an opponent, attack and keep going
