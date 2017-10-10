@@ -73,8 +73,8 @@ bool GameManager::IsValidMove(const Move& move, bool playerOne)
 
     int absDirection = abs(move.mEndPos - move.mStartPos);
 
-    set<int> blackMoves = { 1, mCol - 1, mCol, mCol + 1 };
-    set<int> whiteMoves = { 1, mCol };
+    set<int> blackMoves = { 1, mCol - 1, mCol, mCol + 1 };  /*1, 8, 9, 10*/
+    set<int> whiteMoves = { 1, mCol };                      /*1, 9*/
 
     auto blackSearch = blackMoves.find(absDirection);
     auto whiteSearch = whiteMoves.find(absDirection);
@@ -84,6 +84,13 @@ bool GameManager::IsValidMove(const Move& move, bool playerOne)
     if (isBlack && blackSearch == blackMoves.end())
         return false;
     if (!isBlack && whiteSearch == whiteMoves.end())
+        return false;
+
+    // On left/right moves check that start and end position is on the same row
+    if (absDirection == 1 && move.mEndPos/mCol != move.mStartPos/mCol)
+        return false;
+    // On any diagonal movement check if change in rows is not 1
+    if (absDirection != 1 && absDirection != 9 && abs(move.mEndPos/mCol - move.mStartPos/mCol) != 1)
         return false;
 
     //TODO: Not sure if set is slower
