@@ -36,5 +36,13 @@ else ()
     message(SEND_ERROR "Could not find Curses library")
 endif (PDCURSES_FOUND)
 
-include_directories(lib ${INCLUDE_DIRS})
+include_directories(${INCLUDE_DIRS})
+
+# Catch library
+set(CATCH_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/catch)
+add_library(Catch INTERFACE)
+target_include_directories(Catch INTERFACE ${CATCH_INCLUDE_DIR})
+enable_testing()
+
 add_subdirectory(src)
+add_subdirectory(test)
