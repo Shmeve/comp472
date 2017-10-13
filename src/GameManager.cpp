@@ -122,19 +122,22 @@ GameManager::Outcome GameManager::PlayMove(const Move& move, int opponent)
 void GameManager::Attack(const Move& move, int opponent)
 {
     int direction = move.mEndPos - move.mStartPos;
+    int eliminated = 0;
 
-    //Forward attack
+    // Forward attack check
     if (mBoard->GetPlayer(move.mStartPos + 2 * direction) == opponent) {
-        Eliminate(move.mEndPos, direction, opponent);
+        eliminated = Eliminate(move.mEndPos, direction, opponent);
         mConsecutiveNoAttack = 0;
     }
-    //Backward attack
-    else if (mBoard->GetPlayer(move.mStartPos - direction) == opponent) {
+
+    // Backward attack check and no forward attack
+    if (mBoard->GetPlayer(move.mStartPos - direction) == opponent && eliminated == 0) {
         Eliminate(move.mStartPos, -direction, opponent);
         mConsecutiveNoAttack = 0;
     }
-    //Defensive move
-    else
+
+    // Defensive move
+    if (eliminated == 0)
         mConsecutiveNoAttack++;
 }
 
