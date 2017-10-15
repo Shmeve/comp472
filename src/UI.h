@@ -3,7 +3,9 @@
 #include "Move.h"
 
 #include <curses.h>
+#include <utility>
 #include <string>
+#include <list>
 
 enum Color
 {
@@ -25,6 +27,8 @@ private:
     WINDOW* mBoardWindow = nullptr;
     WINDOW* mInputWindow = nullptr;
     WINDOW* mLogWindow = nullptr;
+
+    std::list<std::pair<const int, const Move>> mLog;
 public:
     static UI* getInstance();
     virtual ~UI();
