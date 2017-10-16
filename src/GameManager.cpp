@@ -73,8 +73,8 @@ bool GameManager::IsValidMove(const Move& move, bool playerOne)
 
     int absDirection = abs(move.mEndPos - move.mStartPos);
 
-    set<int> blackMoves = { 1, mCol - 1, mCol, mCol + 1 };
-    set<int> whiteMoves = { 1, mCol };
+    set<int> blackMoves = { 1, mCol - 1, mCol, mCol + 1 };  /*1, 8, 9, 10*/
+    set<int> whiteMoves = { 1, mCol };                      /*1, 9*/
 
     auto blackSearch = blackMoves.find(absDirection);
     auto whiteSearch = whiteMoves.find(absDirection);
@@ -84,6 +84,13 @@ bool GameManager::IsValidMove(const Move& move, bool playerOne)
     if (isBlack && blackSearch == blackMoves.end())
         return false;
     if (!isBlack && whiteSearch == whiteMoves.end())
+        return false;
+
+    // On left/right moves check that start and end position is on the same row
+    if (absDirection == 1 && move.mEndPos/mCol != move.mStartPos/mCol)
+        return false;
+    // On any diagonal movement check if change in rows is not 1
+    if (absDirection != 1 && absDirection != 9 && abs(move.mEndPos/mCol - move.mStartPos/mCol) != 1)
         return false;
 
     //TODO: Not sure if set is slower
@@ -115,25 +122,29 @@ GameManager::Outcome GameManager::PlayMove(const Move& move, int opponent)
 void GameManager::Attack(const Move& move, int opponent)
 {
     int direction = move.mEndPos - move.mStartPos;
+    int eliminated = 0;
 
-    //Forward attack
+    // Forward attack check
     if (mBoard->GetPlayer(move.mStartPos + 2 * direction) == opponent) {
-        Eliminate(move.mEndPos, direction, opponent);
+        eliminated = Eliminate(move.mEndPos, direction, opponent);
         mConsecutiveNoAttack = 0;
     }
-    //Backward attack
-    else if (mBoard->GetPlayer(move.mStartPos - direction) == opponent) {
+
+    // Backward attack check and no forward attack
+    if (mBoard->GetPlayer(move.mStartPos - direction) == opponent && eliminated == 0) {
         Eliminate(move.mStartPos, -direction, opponent);
         mConsecutiveNoAttack = 0;
     }
-    //Defensive move
-    else
+
+    // Defensive move
+    if (eliminated == 0)
         mConsecutiveNoAttack++;
 }
 
 int GameManager::Eliminate(int currentPos, int direction, int opponent)
 {
     int desiredEnd = currentPos + direction;
+    int absDirection = abs(direction);
 
     //Check if desired attack position is on the board
     if (desiredEnd < 0 || desiredEnd > mBoardSize - 1)
@@ -144,6 +155,10 @@ int GameManager::Eliminate(int currentPos, int direction, int opponent)
     if (direction == -1 && currentPos % mCol == 0)
         return 0;
     if (direction == 1 && currentPos % mCol == mCol - 1)
+        return 0;
+
+    // Check to see diagonal attacks only cross 1 column
+    if (absDirection != 1 && absDirection !=9 && abs((desiredEnd % mCol) - (currentPos % mCol)) != 1)
         return 0;
 
     //If desired attack position has an opponent, attack and keep going
