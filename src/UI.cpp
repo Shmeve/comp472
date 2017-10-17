@@ -206,7 +206,7 @@ std::string UI::getMove(const bool& playerOne)
         bool accepted = false;
         int ch = wgetch(mInputWindow);
 
-        if (i > 0 && (ch == KEY_BACKSPACE || ch == 127)) {
+        if (i > 0 && (ch == KEY_BACKSPACE || ch == 127 || ch == 8)) {
             mvwaddch(mInputWindow, getcury(mInputWindow), getcurx(mInputWindow) - 1 - (i == 2), ' ');
             wmove(mInputWindow, getcury(mInputWindow), getcurx(mInputWindow) - 1);
             --i;
