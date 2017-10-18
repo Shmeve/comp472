@@ -55,7 +55,7 @@ void UI::init()
 {
 #if defined(__unix__) || defined(__APPLE__)
     printf("\033]2;Armadillo\a");
-#elif _WIN32
+#elif _WIN32 && !defined(__CYGWIN__)
     {
         PDC_set_title("Armadillo");
         char* cmd = new char[100];
