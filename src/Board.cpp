@@ -1,13 +1,15 @@
 #include "Board.h"
 #include "UI.h"
 
-Board::Board() : mSize(BOARD_ROWS * BOARD_COLS)
+#include <cstdlib>
+#include <cstring>
+
+Board::Board()
 {
-    mCells = new int[mSize];
+    mCells = (uint8_t*) malloc((mSize >> 2) + 1);
 
     SetCell(mSize / 2, 0); // middle cell is empty
-    for (int i = 0; i < mSize; ++i)
-    {
+    for (int i = 0; i < mSize; ++i) {
         int row = i / BOARD_COLS, col = i % BOARD_COLS;
 
         if (row < BOARD_ROWS / 2) {
@@ -23,31 +25,67 @@ Board::Board() : mSize(BOARD_ROWS * BOARD_COLS)
     }
 }
 
-Board::~Board()
+Board::Board(const Board& other)
 {
-    delete mCells;
+    mCells = (uint8_t*) malloc((mSize >> 2) + 1);
+    memcpy(mCells, other.mCells, (mSize >> 2) + 1);
 }
 
-int Board::GetPlayer(int idx)
+Board::~Board() noexcept
+{
+    free(mCells);
+}
+
+Board::Board(Board&& other) noexcept : mCells(other.mCells)
+{
+    other.mCells = nullptr;
+}
+
+Board& Board::operator=(const Board& other)
+{
+    Board tmp(other);
+    *this = std::move(tmp);
+    return *this;
+}
+
+Board& Board::operator=(Board&& other) noexcept
+{
+    free(mCells);
+    mCells = other.mCells;
+    other.mCells = nullptr;
+    return *this;
+}
+
+int Board::GetPlayer(const int& idx)
 {
     if (idx < 0 || idx > mSize)
         return 0;
-    return mCells[idx];
+
+    uint8_t pos = idx & 3; // index 0-3 within the byte
+    uint8_t mask = 0b11000000 >> (pos << 1); // bitmask for the position (right-shift 2*pos)
+    unsigned int offset = idx >> 2; // offset within the board array
+
+    return (mCells[offset] & mask) >> (6 - (pos << 1));
 }
 
-void Board::Clear(int idx)
+void Board::Clear(const int& idx)
 {
     SetCell(idx, 0);
 }
 
-void Board::Move(int from, int to)
+void Board::Move(const int& from, const int& to)
 {
-    SetCell(to, mCells[from]);
+    SetCell(to, GetPlayer(from));
     SetCell(from, 0);
 }
 
 void Board::SetCell(const int& idx, const int& val)
 {
-	mCells[idx] = val;
-	UI::getInstance()->setCell(idx / BOARD_COLS, idx % BOARD_COLS, val);
+    uint8_t pos = idx & 3; // index 0-3 within the byte
+    uint8_t mask = 0b11000000 >> (pos << 1); // bitmask for the position (right-shift 2*pos)
+    unsigned int offset = idx >> 2; // offset within the board array
+
+    mCells[offset] = (mCells[offset] & ~mask) | ((val << (6 - (pos << 1))) & mask);
+
+    UI::getInstance()->setCell(idx / BOARD_COLS, idx % BOARD_COLS, val);
 }
