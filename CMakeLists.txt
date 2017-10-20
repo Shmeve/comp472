@@ -19,6 +19,8 @@ set(CMAKE_CXX_STANDARD 11)
 # Find Curses library
 if (WIN32 AND NOT CYGWIN)
     # Win32
+    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${CMAKE_SOURCE_DIR}/lib/pdcurses)
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${CMAKE_SOURCE_DIR}/lib/pdcurses)
     find_package(PDCurses REQUIRED)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 else ()

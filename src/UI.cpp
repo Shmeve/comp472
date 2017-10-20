@@ -23,7 +23,7 @@ const int LOG_Y = 0;
 
 UI* UI::mInstance = nullptr;
 
-UI::UI()
+UI::UI() : mLog()
 {
 }
 
@@ -55,7 +55,7 @@ void UI::init()
 {
 #if defined(__unix__) || defined(__APPLE__)
     printf("\033]2;Armadillo\a");
-#elif _WIN32
+#elif _WIN32 && !defined(__CYGWIN__)
     {
         PDC_set_title("Armadillo");
         char* cmd = new char[100];
@@ -206,7 +206,7 @@ std::string UI::getMove(const bool& playerOne)
         bool accepted = false;
         int ch = wgetch(mInputWindow);
 
-        if (i > 0 && (ch == KEY_BACKSPACE || ch == 127)) {
+        if (i > 0 && (ch == KEY_BACKSPACE || ch == 127 || ch == 8)) {
             mvwaddch(mInputWindow, getcury(mInputWindow), getcurx(mInputWindow) - 1 - (i == 2), ' ');
             wmove(mInputWindow, getcury(mInputWindow), getcurx(mInputWindow) - 1);
             --i;
@@ -247,10 +247,26 @@ void UI::message(const std::string& m, const bool& pause)
 
 void UI::log(const int& player, const Move& move)
 {
-    wprintw(mLogWindow, "P%i: %c%c %c%c",
-            player,
-            'A' + move.mStartPos / BOARD_COLS, '1' + move.mStartPos % BOARD_COLS,
-            'A' + move.mEndPos / BOARD_COLS, '1' + move.mEndPos % BOARD_COLS);
-    wmove(mLogWindow, getcury(mLogWindow) + 1, LOG_B);
+    // add new log entry to front
+    mLog.emplace_front(player, move);
+
+    // pop back to maintain size
+    if (mLog.size() > LOG_H - 2 * LOG_B) {
+        mLog.pop_back();
+    }
+
+    // redraw the log from the top
+    wmove(mLogWindow, LOG_B, LOG_B);
+    wstandout(mLogWindow);
+
+    for (auto& it : mLog) {
+        wprintw(mLogWindow, "P%i: %c%c %c%c",
+                it.first,
+                'A' + it.second.mStartPos / BOARD_COLS, '1' + it.second.mStartPos % BOARD_COLS,
+                'A' + it.second.mEndPos / BOARD_COLS, '1' + it.second.mEndPos % BOARD_COLS);
+        wstandend(mLogWindow);
+        wmove(mLogWindow, getcury(mLogWindow) + 1, LOG_B);
+    }
+
     wrefresh(mLogWindow);
 }
