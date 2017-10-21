@@ -1,5 +1,7 @@
 # COMP 472 - Deliverable 1
 
+Team #4 - ProjectArmadillo
+
 Authors:
 
 Thomas Vaudry-Read, 27516517  
