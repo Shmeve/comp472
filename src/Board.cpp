@@ -11,14 +11,14 @@ Board::Board() : mSize(BOARD_ROWS * BOARD_COLS)
         int row = i / BOARD_COLS, col = i % BOARD_COLS;
 
         if (row < BOARD_ROWS / 2) {
-            // player 1 rows
-            SetCell(i, 1);
-        } else if (row == BOARD_ROWS / 2 && col != BOARD_COLS / 2) {
-            // middle row -- first half is player 2, 2nd half is player 1
-            SetCell(i, 1 + (col < BOARD_COLS / 2));
-        } else if (row > BOARD_ROWS / 2) {
             // player 2 rows
             SetCell(i, 2);
+        } else if (row == BOARD_ROWS / 2 && col != BOARD_COLS / 2) {
+            // middle row -- first half is player 1, 2nd half is player 2
+            SetCell(i, 1 + (col > BOARD_COLS / 2));
+        } else if (row > BOARD_ROWS / 2) {
+            // player 1 rows
+            SetCell(i, 1);
         }
     }
 }

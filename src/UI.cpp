@@ -85,10 +85,10 @@ void UI::init()
     init_pair(Color::DEFAULT, COLOR_WHITE, COLOR_BLACK);
     init_pair(Color::CELL_EMPTY_BLACK, COLOR_BLACK, COLOR_BLACK);
     init_pair(Color::CELL_EMPTY_WHITE, COLOR_WHITE, COLOR_WHITE);
-    init_pair(Color::CELL_P1_BLACK, COLOR_RED, COLOR_BLACK);
-    init_pair(Color::CELL_P1_WHITE, COLOR_RED, COLOR_WHITE);
-    init_pair(Color::CELL_P2_BLACK, COLOR_GREEN, COLOR_BLACK);
-    init_pair(Color::CELL_P2_WHITE, COLOR_GREEN, COLOR_WHITE);
+    init_pair(Color::CELL_P1_BLACK, COLOR_GREEN, COLOR_BLACK);
+    init_pair(Color::CELL_P1_WHITE, COLOR_GREEN, COLOR_WHITE);
+    init_pair(Color::CELL_P2_BLACK, COLOR_RED, COLOR_BLACK);
+    init_pair(Color::CELL_P2_WHITE, COLOR_RED, COLOR_WHITE);
 
     refresh();
 

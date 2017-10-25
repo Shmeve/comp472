@@ -28,22 +28,8 @@ int main(int argc, char** argv)
     GameManager::Outcome outcome = GameManager::Outcome::None;
     while (true)
     {
-        // TODO: If AI makes mistake, LOSE
-        Move p2Move = players[1]->GetMove();
-        while (!GameManager::GetInstance()->IsValidMove(p2Move, false))
-        {
-            ui->message("Invalid move!", true);
-            p2Move = players[1]->GetMove();
-        }
-
-        outcome = GameManager::GetInstance()->PlayMove(p2Move, 1);
-        ui->log(2, p2Move);
-
-        if (outcome != GameManager::Outcome::None)
-            break;
-
         Move p1Move = players[0]->GetMove();
-        while (!GameManager::GetInstance()->IsValidMove(p1Move, true))
+        while (!GameManager::GetInstance()->IsValidMove(p1Move, players[0]->IsPlayerOne()))
         {
             ui->message("Invalid move!", true);
             p1Move = players[0]->GetMove();
@@ -51,6 +37,20 @@ int main(int argc, char** argv)
 
         outcome = GameManager::GetInstance()->PlayMove(p1Move, 2);
         ui->log(1, p1Move);
+
+        if (outcome != GameManager::Outcome::None)
+            break;
+
+        // TODO: If AI makes mistake, LOSE
+        Move p2Move = players[1]->GetMove();
+        while (!GameManager::GetInstance()->IsValidMove(p2Move, players[1]->IsPlayerOne()))
+        {
+            ui->message("Invalid move!", true);
+            p2Move = players[1]->GetMove();
+        }
+
+        outcome = GameManager::GetInstance()->PlayMove(p2Move, 1);
+        ui->log(2, p2Move);
 
         if (outcome != GameManager::Outcome::None)
             break;
