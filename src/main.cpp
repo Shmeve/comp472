@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     while (true)
     {
         Move p1Move = players[0]->GetMove();
-        while (!GameManager::GetInstance()->IsValidMove(p1Move, true))
+        while (!GameManager::GetInstance()->IsValidMove(p1Move, players[0]->IsPlayerOne()))
         {
             ui->message("Invalid move!", true);
             p1Move = players[0]->GetMove();
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 
         // TODO: If AI makes mistake, LOSE
         Move p2Move = players[1]->GetMove();
-        while (!GameManager::GetInstance()->IsValidMove(p2Move, false))
+        while (!GameManager::GetInstance()->IsValidMove(p2Move, players[1]->IsPlayerOne()))
         {
             ui->message("Invalid move!", true);
             p2Move = players[1]->GetMove();
