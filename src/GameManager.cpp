@@ -10,14 +10,12 @@ GameManager* GameManager::mInstance(nullptr);
 GameManager::GameManager() : mConsecutiveNoAttack(0), mRow(BOARD_ROWS), mCol(BOARD_COLS)
 {
     mBoardSize = mRow * mCol;
-    mBoard = new Board();
     mTokens[0] = 22;
     mTokens[1] = 22;
 }
 
 GameManager::~GameManager()
 {
-    delete mBoard;
     delete mInstance;
 }
 
@@ -43,7 +41,7 @@ GameManager::Outcome GameManager::EvaluateWinningCondition()
     return outcome;
 }
 
-bool GameManager::IsValidMove(const Move& move, bool playerOne)
+bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
 {
     int currPos = move.mStartPos;
 
@@ -54,8 +52,8 @@ bool GameManager::IsValidMove(const Move& move, bool playerOne)
 
     //Check that the start cell has the player's token and the end cell is empty
     //Assuming: 0 -> empty, 1 -> playerOne, 2-> playerTwo
-    int startPlayer = mBoard->GetPlayer(move.mStartPos);
-    int endPlayer = mBoard->GetPlayer(move.mEndPos);
+    int startPlayer = board.GetPlayer(move.mStartPos);
+    int endPlayer = board.GetPlayer(move.mEndPos);
 
     if (endPlayer != 0)
         return false;
@@ -79,7 +77,7 @@ bool GameManager::IsValidMove(const Move& move, bool playerOne)
     auto blackSearch = blackMoves.find(absDirection);
     auto whiteSearch = whiteMoves.find(absDirection);
 
-    bool isBlack = mBoard->IsBlack(move.mStartPos);
+    bool isBlack = board.IsBlack(move.mStartPos);
 
     if (isBlack && blackSearch == blackMoves.end())
         return false;
@@ -103,13 +101,13 @@ bool GameManager::IsValidMove(const Move& move, bool playerOne)
     return true;
 }
 
-GameManager::Outcome GameManager::PlayMove(const Move& move, int opponent)
+GameManager::Outcome GameManager::PlayMove(Board& board, const Move& move, int opponent, bool ai)
 {
     Outcome outcome = None;
 
-    Attack(move, opponent);
+    Attack(board, move, opponent, ai);
 
-    mBoard->Move(move.mStartPos, move.mEndPos);
+    board.Move(move.mStartPos, move.mEndPos);
 
     outcome = EvaluateWinningCondition();
 
@@ -119,20 +117,20 @@ GameManager::Outcome GameManager::PlayMove(const Move& move, int opponent)
     return outcome;
 }
 
-void GameManager::Attack(const Move& move, int opponent)
+void GameManager::Attack(Board& board, const Move& move, int opponent, bool ai)
 {
     int direction = move.mEndPos - move.mStartPos;
     int eliminated = 0;
 
     // Forward attack check
-    if (mBoard->GetPlayer(move.mStartPos + 2 * direction) == opponent) {
-        eliminated = Eliminate(move.mEndPos, direction, opponent);
+    if (board.GetPlayer(move.mStartPos + 2 * direction) == opponent) {
+        eliminated = Eliminate(board, move.mEndPos, direction, opponent, ai);
         mConsecutiveNoAttack = 0;
     }
 
     // Backward attack check and no forward attack
-    if (mBoard->GetPlayer(move.mStartPos - direction) == opponent && eliminated == 0) {
-        Eliminate(move.mStartPos, -direction, opponent);
+    if (board.GetPlayer(move.mStartPos - direction) == opponent && eliminated == 0) {
+        Eliminate(board, move.mStartPos, -direction, opponent, ai);
         mConsecutiveNoAttack = 0;
     }
 
@@ -141,7 +139,7 @@ void GameManager::Attack(const Move& move, int opponent)
         mConsecutiveNoAttack++;
 }
 
-int GameManager::Eliminate(int currentPos, int direction, int opponent)
+int GameManager::Eliminate(Board& board, int currentPos, int direction, int opponent, bool ai)
 {
     int desiredEnd = currentPos + direction;
     int absDirection = abs(direction);
@@ -162,12 +160,13 @@ int GameManager::Eliminate(int currentPos, int direction, int opponent)
         return 0;
 
     //If desired attack position has an opponent, attack and keep going
-    if (mBoard->GetPlayer(desiredEnd) == opponent)
+    if (board.GetPlayer(desiredEnd) == opponent)
     {
-        mBoard->Clear(desiredEnd);
-        mTokens[opponent - 1]--;
+        board.Clear(desiredEnd);
+        if (!ai)
+            mTokens[opponent - 1]--;
         currentPos += direction;
-        return Eliminate(currentPos, direction, opponent) + 1;
+        return Eliminate(board, currentPos, direction, opponent, ai) + 1;
     }
 
     //If attacked cell does not hold an opponent, we are done

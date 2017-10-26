@@ -1,6 +1,8 @@
 set(SOURCE_FILES
     # Source files here...
     main.cpp
+    AIPlayer.cpp
+    AIPlayer.h
     Board.cpp
     Board.h
     GameManager.cpp
@@ -8,6 +10,10 @@ set(SOURCE_FILES
     HumanPlayer.cpp
     HumanPlayer.h
     Move.h
+    Node.cpp
+    Node.h
+    RemainingTilesPlayer.cpp
+    RemainingTilesPlayer.h
     Player.h
     UI.cpp
     UI.h)

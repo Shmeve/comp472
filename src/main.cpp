@@ -4,6 +4,7 @@
 
 #include "UI.h"
 #include "HumanPlayer.h"
+#include "RemainingTilesPlayer.h"
 #include "GameManager.h"
 
 int main(int argc, char** argv)
@@ -21,35 +22,42 @@ int main(int argc, char** argv)
 
     //Create 2 human players
     players[0] = new HumanPlayer(true);
-    players[1] = new HumanPlayer(false);
+    players[1] = new RemainingTilesPlayer(false);
 
     GameManager* gameManager = GameManager::GetInstance();
+    Board gameBoard = Board(true);
 
     GameManager::Outcome outcome = GameManager::Outcome::None;
     while (true)
     {
-        Move p1Move = players[0]->GetMove();
-        while (!GameManager::GetInstance()->IsValidMove(p1Move, players[0]->IsPlayerOne()))
+        Move p1Move = players[0]->GetMove(gameBoard);
+        while (!GameManager::GetInstance()->IsValidMove(gameBoard, p1Move, players[0]->IsPlayerOne()))
         {
             ui->message("Invalid move!", true);
-            p1Move = players[0]->GetMove();
+            p1Move = players[0]->GetMove(gameBoard);
         }
 
-        outcome = GameManager::GetInstance()->PlayMove(p1Move, 2);
+        outcome = GameManager::GetInstance()->PlayMove(gameBoard, p1Move, 2, false);
         ui->log(1, p1Move);
 
         if (outcome != GameManager::Outcome::None)
             break;
 
-        // TODO: If AI makes mistake, LOSE
-        Move p2Move = players[1]->GetMove();
-        while (!GameManager::GetInstance()->IsValidMove(p2Move, players[1]->IsPlayerOne()))
+        Move p2Move = players[1]->GetMove(gameBoard);
+        while (!GameManager::GetInstance()->IsValidMove(gameBoard, p2Move, players[1]->IsPlayerOne()))
         {
-            ui->message("Invalid move!", true);
-            p2Move = players[1]->GetMove();
+            outcome = GameManager::Outcome::Player1Win;
+            break;
+
+            //TODO: Allow for Human Player2
+            //ui->message("Invalid move!", true);
+            //p2Move = players[1]->GetMove();
         }
 
-        outcome = GameManager::GetInstance()->PlayMove(p2Move, 1);
+        if (outcome != GameManager::Outcome::None)
+            break;
+
+        outcome = GameManager::GetInstance()->PlayMove(gameBoard, p2Move, 1, false);
         ui->log(2, p2Move);
 
         if (outcome != GameManager::Outcome::None)

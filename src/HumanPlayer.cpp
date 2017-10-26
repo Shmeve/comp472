@@ -6,7 +6,7 @@
 #include <string>
 #include <set>
 
-Move HumanPlayer::GetMove()
+Move HumanPlayer::GetMove(Board board)
 {
     std::string moveStr = UI::getInstance()->getMove(mIsPlayerOne);
 
