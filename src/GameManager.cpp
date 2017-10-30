@@ -125,18 +125,21 @@ void GameManager::Attack(Board& board, const Move& move, int opponent, bool ai)
     // Forward attack check
     if (board.GetPlayer(move.mStartPos + 2 * direction) == opponent) {
         eliminated = Eliminate(board, move.mEndPos, direction, opponent, ai);
-        mConsecutiveNoAttack = 0;
+        if (!ai)
+            mConsecutiveNoAttack = 0;
     }
 
     // Backward attack check and no forward attack
     if (board.GetPlayer(move.mStartPos - direction) == opponent && eliminated == 0) {
         Eliminate(board, move.mStartPos, -direction, opponent, ai);
-        mConsecutiveNoAttack = 0;
+        if (!ai)
+            mConsecutiveNoAttack = 0;
     }
 
     // Defensive move
     if (eliminated == 0)
-        mConsecutiveNoAttack++;
+        if (!ai)
+            mConsecutiveNoAttack++;
 }
 
 int GameManager::Eliminate(Board& board, int currentPos, int direction, int opponent, bool ai)

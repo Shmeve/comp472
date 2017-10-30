@@ -4,7 +4,7 @@
 
 #include "UI.h"
 #include "HumanPlayer.h"
-#include "RemainingTilesPlayer.h"
+#include "NaivePlayer.h"
 #include "GameManager.h"
 
 int main(int argc, char** argv)
@@ -20,9 +20,12 @@ int main(int argc, char** argv)
     //Game Setup
     Player** players = new Player*[2];
 
+    // TODO: AI for RED or GREEN
+    // Currently hard-code RED
+
     //Create 2 human players
-    players[0] = new HumanPlayer(true);
-    players[1] = new RemainingTilesPlayer(false);
+    players[0] = new HumanPlayer(true);  // GREEN
+    players[1] = new NaivePlayer(false); // RED
 
     GameManager* gameManager = GameManager::GetInstance();
     Board gameBoard = Board(true);

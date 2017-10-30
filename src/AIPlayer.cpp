@@ -13,7 +13,10 @@ Move AIPlayer::GetMove(Board board)
     Node* root = Node::CreateTree(board, 3, false);
 
     // Call MiniMax
-    int max = MiniMax(root, 3, true);
+    // TODO: if RED -> MIN, GREEN -> MAX
+    // FOR NAIVE HEURISTIC
+    // HARD-CODE FALSE FOR RED
+    int max = MiniMax(root, 3, false);
 
     for (int i = 0; i < root->GetChildCount(); i++) {
         if (root->GetChild(i)->GetValue() == max)

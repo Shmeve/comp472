@@ -10,6 +10,8 @@ set(SOURCE_FILES
     HumanPlayer.cpp
     HumanPlayer.h
     Move.h
+    NaivePlayer.cpp
+    NaivePlayer.h
     Node.cpp
     Node.h
     RemainingTilesPlayer.cpp
