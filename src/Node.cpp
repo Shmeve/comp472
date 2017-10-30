@@ -2,10 +2,19 @@
 #include "GameManager.h"
 
 #include <list>
+#include <vector>
 
 Node::Node()
 {
     mBoard = Board(false);
+}
+
+Node::Node(Node* parent, Board board, Move move, int depth)
+{
+    mParent = parent;
+    mBoard = board;
+    mMove = move;
+    mDepth = depth;
 }
 
 Node::~Node()
@@ -19,40 +28,53 @@ Node::~Node()
 
 Node* Node::CreateTree(Board board, int depth, bool playerOne)
 {
-    Node* node = new Node();
-    node->mBoard = board;
-
+    Node* root = new Node();
+    root->mBoard = board;
+    root->mDepth = 0;
     std::list<int> pos = { -BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1 };
-    std::list<Move> moves;
 
-    for (int i = 0; i < BOARD_ROWS * BOARD_COLS; i++) {
-        if (node->mBoard.GetCells()[i] == (playerOne ? 1 : 2))
-        {
-            for (int n : pos) {
-                Move move = Move(i, i + n);
-                if (GameManager::GetInstance()->IsValidMove(node->mBoard, move, playerOne))
-                    moves.push_back(move);
+    std::vector<Node*>* nodesAtDepth = new std::vector<Node*>[depth + 1];
+    nodesAtDepth[0].push_back(root);
+
+    // Iterate through depth levels
+    for (int i = 0; i <= depth; i++) {
+        // Iterate through nodes in depth i
+        for (unsigned int j = 0; j < nodesAtDepth[i].size(); j++) {
+            if (i == depth) // If depth is lowest depth, NO CHILDREN
+            {
+                nodesAtDepth[i][j]->mChildren = nullptr;
+            }
+            else
+            {
+                std::list<Move> moves;
+
+                // Generate moves
+                for (int k = 0; k < BOARD_ROWS * BOARD_COLS; k++) {
+                    if (nodesAtDepth[i][j]->mBoard.GetCells()[k] == (i % 2 ? (playerOne ? 2 : 1) : (playerOne ? 1 : 2)))
+                    {
+                        for (int n : pos) {
+                            Move move = Move(k, k + n);
+                            if (GameManager::GetInstance()->IsValidMove(nodesAtDepth[i][j]->mBoard, move, (i % 2) ? !playerOne : playerOne))
+                                moves.push_back(move);
+                        }
+                    }
+                }
+                nodesAtDepth[i][j]->mChildCount = moves.size();
+
+                int index = 0;
+                nodesAtDepth[i][j]->mChildren = new Node*[nodesAtDepth[i][j]->mChildCount];
+
+                // For each move, make children
+                for (std::list<Move>::const_iterator it = moves.begin(); it != moves.end(); ++it) {
+                    Board tmp = nodesAtDepth[i][j]->mBoard;
+                    GameManager::GetInstance()->PlayMove(tmp, *it, (i % 2 ? (playerOne ? 1 : 2) : (playerOne ? 2 : 1)), true);
+                    nodesAtDepth[i][j]->mChildren[index] = new Node(nodesAtDepth[i][j], tmp, *it, i + 1);
+                    nodesAtDepth[i + 1].push_back(nodesAtDepth[i][j]->mChildren[index]);
+                    index++;
+                }
             }
         }
     }
-    node->mChildCount = moves.size();
 
-    if (depth > 0 && node->mChildCount > 0)
-    {
-        node->mChildren = new Node*[node->mChildCount];
-        int index = 0;
-        for (std::list<Move>::const_iterator it = moves.begin(); it != moves.end(); ++it) {
-            Board tmp = node->mBoard;
-            GameManager::GetInstance()->PlayMove(tmp, *it, 1, true);
-            node->mChildren[index] = CreateTree(tmp, depth - 1, !playerOne);
-            node->mChildren[index]->mMove = *it;
-            index++;
-        }
-    }
-    else
-    {
-        node->mChildren = nullptr;
-    }
-
-    return node;
+    return root;
 }

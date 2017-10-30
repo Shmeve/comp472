@@ -5,6 +5,10 @@
 #include <limits.h>
 #include <algorithm>
 
+#include <iostream>
+#include <fstream>
+#include <list>
+
 Move AIPlayer::GetMove(Board board)
 {
     board.SetUI(false);
@@ -14,6 +18,44 @@ Move AIPlayer::GetMove(Board board)
 
     // Call MiniMax
     int value = MiniMax(root, 3, mIsPlayerOne);
+
+    // TODO: draw root
+    std::ofstream file;
+    file.open("tree.txt");
+
+    std::list<Node*> tree;
+    tree.push_back(root);
+
+    int depth = 0;
+    Node* prevParent = nullptr;
+    while (!tree.empty()) {
+        Node* node = tree.front();
+
+        if (depth != node->GetDepth())
+        {
+            depth = node->GetDepth();
+            prevParent = node->GetParent();
+            file << "/n";
+        }
+
+        if (prevParent == node->GetParent())
+            file << " ";
+        else
+        {
+            file << ",";
+        }
+
+        file << node->GetValue();
+
+        for (int i = 0; i < node->GetChildCount(); i++)
+            tree.push_back(node->GetChild(i));
+
+        prevParent = node->GetParent();
+        tree.pop_front();
+    }
+
+    file << "/n/n";
+    file.close();
 
     for (int i = 0; i < root->GetChildCount(); i++) {
         if (root->GetChild(i)->GetValue() == value)
@@ -25,8 +67,11 @@ Move AIPlayer::GetMove(Board board)
 
 int AIPlayer::MiniMax(Node* node, int depth, bool maxPlayer)
 {
-    if (depth = 0 || node->IsTerminal())
-        return EvaluateHeuristic(node->GetBoard());
+    if (depth == 0 || node->IsTerminal())
+    {
+        node->SetValue(EvaluateHeuristic(node->GetBoard()));
+        return node->GetValue();
+    }
 
     if (maxPlayer)
     {
