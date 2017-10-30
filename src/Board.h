@@ -21,7 +21,7 @@ public:
 
     inline int* GetCells() { return mCells; }
     inline bool IsBlack(int idx) { return idx % 2 == 0; }
-    int GetPlayer(int idx);
+    int GetPlayer(unsigned int idx);
     void Clear(int idx);
     void Move(int from, int to);
     void SetCell(const int& idx, const int& val);

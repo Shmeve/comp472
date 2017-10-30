@@ -1,13 +1,16 @@
 #include "Board.h"
 #include "UI.h"
 
+#include <cstdlib>
+#include <cstring>
+
 Board::Board(bool ui)
 {
     mCells = new int[mSize];
     mUpdateUI = ui;
 
     SetCell(mSize / 2, 0); // middle cell is empty
-    for (int i = 0; i < mSize; ++i)
+    for (unsigned int i = 0; i < mSize; ++i)
     {
         int row = i / BOARD_COLS, col = i % BOARD_COLS;
 
@@ -56,7 +59,7 @@ Board& Board::operator=(Board&& other) noexcept
     return *this;
 }
 
-int Board::GetPlayer(int idx)
+int Board::GetPlayer(unsigned int idx)
 {
     if (idx < 0 || idx > mSize)
         return 0;

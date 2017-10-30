@@ -16,7 +16,7 @@ public:
     ~Node();
 
     static Node* CreateTree(Board board, int depth, bool playerOne);
-    inline Board GetBoard() { return mBoard; }
+    inline Board& GetBoard() { return mBoard; }
     inline int GetChildCount() { return mChildCount; }
     inline Node* GetChild(int index) { return mChildren[index]; }
     inline Move GetMove() { return mMove; }
