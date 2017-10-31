@@ -14,7 +14,7 @@ Move AIPlayer::GetMove(Board board)
     board.SetUI(false);
 
     // Create tree
-    Node* root = Node::CreateTree(board, 3, false);
+    Node* root = Node::CreateTree(board, 3, mIsPlayerOne);
 
     // Call MiniMax
     int value = MiniMax(root, 3, mIsPlayerOne);

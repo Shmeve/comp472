@@ -45,6 +45,7 @@ public:
 
     // input ops
     std::string getMove(const bool& playerOne);
+    char getAIPlayer();
     void message(const std::string& m, const bool& pause);
 
     // log ops

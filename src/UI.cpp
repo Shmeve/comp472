@@ -235,6 +235,38 @@ std::string UI::getMove(const bool& playerOne)
     return move;
 }
 
+char UI::getAIPlayer()
+{
+    char colour;
+
+    eraseWindow(mInputWindow);
+    mvwaddstr(mInputWindow, 0, 1, "Command");
+    mvwprintw(mInputWindow, INPUT_B, INPUT_B, "AI Red (R) or Green (G) ?: ");
+    wrefresh(mInputWindow);
+
+
+    bool accepted = false;
+    int ch = wgetch(mInputWindow);
+
+    if (ch == KEY_BACKSPACE || ch == 127 || ch == 8) {
+        mvwaddch(mInputWindow, getcury(mInputWindow), getcurx(mInputWindow) - 1, ' ');
+        wmove(mInputWindow, getcury(mInputWindow), getcurx(mInputWindow) - 1);
+    }
+    else {
+        ch = toupper(ch);
+        accepted = true;
+    }
+
+    if (accepted) {
+        colour = static_cast<const chtype>(ch);
+        waddch(mInputWindow, static_cast<const chtype>(ch));
+
+        wrefresh(mInputWindow);
+    }
+
+    return colour;
+}
+
 void UI::message(const std::string& m, const bool& pause)
 {
     eraseWindow(mInputWindow);
