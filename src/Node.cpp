@@ -4,6 +4,7 @@
 #include <list>
 #include <utility>
 #include <vector>
+#include <omp.h>
 
 Node::Node(Node* parent, Board board, Move move, int depth)
         : mParent(parent), mBoard(std::move(board)), mMove(move), mDepth(depth)
@@ -30,7 +31,8 @@ Node* Node::CreateTree(Board board, int depth, bool playerOne)
     // Iterate through depth levels
     for (int i = 0; i <= depth; i++) {
         // Iterate through nodes in depth i
-        for (unsigned int j = 0; j < nodesAtDepth[i].size(); j++) {
+        #pragma omp parallel for
+        for (int j = 0; j < nodesAtDepth[i].size(); j++) {
             if (i == depth) {
                 // If depth is lowest depth, NO CHILDREN
                 nodesAtDepth[i][j]->mChildren = nullptr;

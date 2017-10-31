@@ -8,19 +8,28 @@
 #include <iostream>
 #include <fstream>
 #include <list>
+#include <time.h>
 
 Move AIPlayer::GetMove(Board board)
 {
     board.SetUI(false);
 
     // Create tree
-    Node* root = Node::CreateTree(board, 3, mIsPlayerOne);
+    std::ofstream file;
+    file.open("C:/Users/thoma/Desktop/runtime.txt", std::ios::app);
+
+    clock_t t = clock();
+    Node* root = Node::CreateTree(board, 4, false);
+    t = clock() - t;
+
+    file << ((float)t / CLOCKS_PER_SEC) << '\n';
+    file.close();
 
     // Call MiniMax
-    int value = MiniMax(root, 3, mIsPlayerOne);
+    int value = MiniMax(root, 4, mIsPlayerOne);
 
     // TODO: draw root
-    std::ofstream file;
+    /*std::ofstream file;
     file.open("tree.txt");
 
     std::list<Node*> tree;
@@ -54,6 +63,7 @@ Move AIPlayer::GetMove(Board board)
 
     file << "/n/n";
     file.close();
+    */
 
     for (int i = 0; i < root->GetChildCount(); i++) {
         if (root->GetChild(i)->GetValue() == value) {
