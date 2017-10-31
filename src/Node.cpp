@@ -31,6 +31,7 @@ Node* Node::CreateTree(Board board, int depth, bool playerOne)
     // Iterate through depth levels
     for (int i = 0; i <= depth; i++) {
         // Iterate through nodes in depth i
+        std::vector<Node*>* tmpNodesAtDepth = new std::vector<Node*>[nodesAtDepth[i].size()];
         #pragma omp parallel for
         for (int j = 0; j < nodesAtDepth[i].size(); j++) {
             if (i == depth) {
@@ -61,11 +62,16 @@ Node* Node::CreateTree(Board board, int depth, bool playerOne)
                     Board tmp = nodesAtDepth[i][j]->mBoard;
                     GameManager::GetInstance()->PlayMove(tmp, *it, (i % 2 ? (playerOne ? 1 : 2) : (playerOne ? 2 : 1)), true);
                     nodesAtDepth[i][j]->mChildren[index] = new Node(nodesAtDepth[i][j], tmp, *it, i + 1);
-                    nodesAtDepth[i + 1].push_back(nodesAtDepth[i][j]->mChildren[index]);
+                    tmpNodesAtDepth[j].push_back(nodesAtDepth[i][j]->mChildren[index]);
                     index++;
                 }
             }
         }
+        for (int j = 0; j < nodesAtDepth[i].size(); j++) {
+            if (!tmpNodesAtDepth[j].empty())
+                nodesAtDepth[i + 1].insert(nodesAtDepth[i + 1].end(), tmpNodesAtDepth[j].begin(), tmpNodesAtDepth[j].end());
+        }
+
     }
 
     return root;
