@@ -20,17 +20,29 @@ int main(int argc, char** argv)
 
     ui->mainMenu();
 
+    unsigned int numTypes;
+    auto types = PlayerFactory::PlayerTypes(numTypes);
+
     unsigned int numOpts;
     auto opts = PlayerFactory::Options(numOpts);
 
-    auto greenPlayerType = ui->selectPlayer(opts, numOpts, true);
-    auto redPlayerType = ui->selectPlayer(opts, numOpts, false);
+    unsigned int greenAIOptions = INT_MAX;
+    unsigned int redAIOptions = INT_MAX;
+
+    auto greenPlayerType = ui->selectPlayer(types, numTypes, true);
+    if (greenPlayerType != 0) { // AI
+        greenAIOptions = ui->selectAIOptions(opts, numOpts, true);
+    }
+    auto redPlayerType = ui->selectPlayer(types, numTypes, false);
+    if (redPlayerType != 0) { // AI
+        redAIOptions = ui->selectAIOptions(opts, numOpts, false);
+    }
 
     ui->startGame();
 
     // Game Setup
-    Player* players[2] = {PlayerFactory::Create(opts[greenPlayerType], true),
-                          PlayerFactory::Create(opts[redPlayerType], false)};
+    Player* players[2] = {PlayerFactory::Create(types[greenPlayerType], true, (greenAIOptions == 0)),
+                          PlayerFactory::Create(types[redPlayerType], false, (redAIOptions == 0))};
 
     GameManager* gameManager = GameManager::GetInstance();
     Board gameBoard = Board(true); // TODO: refactor this ui=true parameter

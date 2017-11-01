@@ -25,6 +25,7 @@ private:
     UI();
 
     WINDOW* mPlayerSelectWindow = nullptr;
+    WINDOW* mAIOptionsWindow = nullptr;
     WINDOW* mBoardWindow = nullptr;
     WINDOW* mInputWindow = nullptr;
     WINDOW* mLogWindow = nullptr;
@@ -54,6 +55,7 @@ public:
 
     // input ops
     unsigned int selectPlayer(const char** opts, const unsigned int& numOpts, const bool& playerOne);
+    unsigned int selectAIOptions(const char** opts, const unsigned int& numOpts, const bool& playerOne);
     std::string getMove(const bool& playerOne);
     void message(const std::string& m, const bool& pause);
 

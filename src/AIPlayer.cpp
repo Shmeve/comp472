@@ -16,8 +16,13 @@ Move AIPlayer::GetMove(Board board)
     // Create tree
     Node* root = Node::CreateTree(board, 3, mIsPlayerOne);
 
+    int value = 0;
     // Call MiniMax
-    int value = MiniMax(root, 3, mIsPlayerOne);
+    if (!mAlphaBeta) {
+        value = MiniMax(root, 3, mIsPlayerOne);
+    } else {
+        value = AlphaBeta(root, 3, INT_MIN, INT_MAX, mIsPlayerOne);
+    }
 
     // TODO: draw root
     std::ofstream file;
@@ -82,6 +87,39 @@ int AIPlayer::MiniMax(Node* node, int depth, bool maxPlayer)
         int min = INT_MAX;
         for (int i = 0; i < node->GetChildCount(); i++) {
             min = std::min(min, MiniMax(node->GetChild(i), depth - 1, !maxPlayer));
+        }
+        node->SetValue(min);
+        return min;
+    }
+}
+
+int AIPlayer::AlphaBeta(Node* node, int depth, int alpha, int beta, bool maxPlayer)
+{
+    if (depth == 0 || node->IsTerminal()) {
+        node->SetValue(EvaluateHeuristic(node->GetBoard()));
+        return node->GetValue();
+    }
+
+    if (maxPlayer) {
+        int max = INT_MIN;
+        for (int i = 0; i < node->GetChildCount(); i++) {
+            max = std::max(max, AlphaBeta(node->GetChild(i), depth - 1, alpha, beta, !maxPlayer));
+            alpha = std::max(alpha, max);
+            if (beta <= alpha) {
+                break; // Beta cut-off
+            }
+        }
+        node->SetValue(max);
+        return max;
+    }
+    else {
+        int min = INT_MAX;
+        for (int i = 0; i < node->GetChildCount(); i++) {
+            min = std::min(min, AlphaBeta(node->GetChild(i), depth - 1, alpha, beta, !maxPlayer));
+            beta = std::min(beta, min);
+            if (beta <= alpha) {
+                break; // Alpha cut-off
+            }
         }
         node->SetValue(min);
         return min;

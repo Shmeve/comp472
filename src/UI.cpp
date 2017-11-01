@@ -245,6 +245,21 @@ unsigned int UI::selectPlayer(const char** opts, const unsigned int& numOpts, co
     return pickMenuOption(mPlayerSelectWindow, 1, 2, opts, numOpts);
 }
 
+unsigned int UI::selectAIOptions(const char** opts, const unsigned int& numOpts, const bool& playerOne)
+{
+    mAIOptionsWindow = createWindow(PLAYER_H, PLAYER_W, PLAYER_Y, PLAYER_X);
+
+    const char* playerName = getPlayerDisplayName(playerOne);
+    const int attr = getPlayerDisplayAttributes(playerOne);
+
+    mvwprintw(mAIOptionsWindow, 0, 1, "Select options for %s Minimax", playerName);
+    wattron(mAIOptionsWindow, attr);
+    mvwaddstr(mAIOptionsWindow, 0, 20, playerName);
+    wattroff(mAIOptionsWindow, attr);
+
+    return pickMenuOption(mAIOptionsWindow, 1, 2, opts, numOpts);
+}
+
 std::string UI::getMove(const bool& playerOne)
 {
     const int attr = getPlayerDisplayAttributes(playerOne);

@@ -6,7 +6,7 @@ class NaivePlayer : public AIPlayer
 {
 public:
     NaivePlayer() : AIPlayer() {};
-    NaivePlayer(bool playerOne) : AIPlayer(playerOne) {};
+    NaivePlayer(bool playerOne, bool alphaBeta) : AIPlayer(playerOne, alphaBeta) {};
 
     int EvaluateHeuristic(Board& board);
 };
