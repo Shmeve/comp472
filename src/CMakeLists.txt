@@ -18,7 +18,9 @@ set(SOURCE_FILES
     RemainingTilesPlayer.h
     Player.h
     UI.cpp
-    UI.h)
+    UI.h
+    PlayerFactory.h
+    PlayerFactory.cpp)
 
 # Create the console game executable
 add_executable(comp472 ${SOURCE_FILES})

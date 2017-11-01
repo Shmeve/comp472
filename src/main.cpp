@@ -1,11 +1,10 @@
 #include <iostream>
 #include <curses.h>
-#include <string.h>
 
 #include "UI.h"
-#include "HumanPlayer.h"
-#include "NaivePlayer.h"
 #include "GameManager.h"
+#include "PlayerFactory.h"
+#include "HumanPlayer.h"
 
 int main(int argc, char** argv)
 {
@@ -17,28 +16,24 @@ int main(int argc, char** argv)
     UI* ui = UI::getInstance();
     ui->init();
 
-    //Get desired AI colour
-    char AIColourChar = ui->getAIPlayer();
-    while (AIColourChar != 'R' && AIColourChar != 'G') {
-        AIColourChar = ui->getAIPlayer();
-    }
+    ui->mainMenu();
+
+    unsigned int numOpts;
+    auto opts = PlayerFactory::Options(numOpts);
+
+    auto greenPlayerType = ui->selectPlayer(opts, numOpts, true);
+    auto redPlayerType = ui->selectPlayer(opts, numOpts, false);
+
+    ui->startGame();
 
     //Game Setup
-    Player** players = new Player* [2];
-
-    //Create 2 players
-    if (AIColourChar == 'R') {
-        players[0] = new HumanPlayer(true);  // GREEN
-        players[1] = new NaivePlayer(false); // RED
-    } else {
-        players[0] = new NaivePlayer(true);  // GREEN
-        players[1] = new HumanPlayer(false); // RED
-    }
+    Player* players[2] = {PlayerFactory::Create(opts[greenPlayerType], true),
+                          PlayerFactory::Create(opts[redPlayerType], false)};
 
     GameManager* gameManager = GameManager::GetInstance();
-    Board gameBoard = Board(true);
-
+    Board gameBoard = Board(true); // TODO: refactor this ui=true parameter
     GameManager::Outcome outcome = GameManager::Outcome::None;
+
     while (true) {
         Move p1Move = players[0]->GetMove(gameBoard);
         bool validMove = GameManager::GetInstance()->IsValidMove(gameBoard, p1Move, players[0]->IsPlayerOne());
