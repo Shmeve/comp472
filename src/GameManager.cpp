@@ -7,7 +7,7 @@ using namespace std;
 
 GameManager* GameManager::mInstance(nullptr);
 
-GameManager::GameManager() : mConsecutiveNoAttack(0), mRow(BOARD_ROWS), mCol(BOARD_COLS)
+GameManager::GameManager() : mCol(BOARD_COLS), mRow(BOARD_ROWS), mConsecutiveNoAttack(0)
 {
     mBoardSize = mRow * mCol;
     mTokens[0] = 22;

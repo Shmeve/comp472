@@ -235,23 +235,28 @@ unsigned int UI::selectPlayer(const char** opts, const unsigned int& numOpts, co
     mPlayerSelectWindow = createWindow(PLAYER_H, PLAYER_W, PLAYER_Y, PLAYER_X);
 
     const char* playerName = getPlayerDisplayName(playerOne);
-    const int color = playerOne ? Color::CELL_GREEN_BLACK : Color::CELL_RED_BLACK;
+    const int attr = getPlayerDisplayAttributes(playerOne);
 
     mvwprintw(mPlayerSelectWindow, 0, 1, "Select a %s player", playerName);
-    wattron(mPlayerSelectWindow, COLOR_PAIR(color));
+    wattron(mPlayerSelectWindow, attr);
     mvwaddstr(mPlayerSelectWindow, 0, 10, playerName);
-    wattroff(mPlayerSelectWindow, COLOR_PAIR(color));
+    wattroff(mPlayerSelectWindow, attr);
 
     return pickMenuOption(mPlayerSelectWindow, 1, 2, opts, numOpts);
 }
 
 std::string UI::getMove(const bool& playerOne)
 {
+    const int attr = getPlayerDisplayAttributes(playerOne);
+
     std::string move(4, ' ');
 
     eraseWindow(mInputWindow);
     mvwaddstr(mInputWindow, 0, 1, "Command");
-    mvwprintw(mInputWindow, INPUT_B, INPUT_B, "P%i's move: ", 2 - playerOne);
+    wattron(mInputWindow, attr);
+    mvwaddstr(mInputWindow, INPUT_B, INPUT_B, getPlayerDisplayName(playerOne));
+    wattroff(mInputWindow, attr);
+    waddstr(mInputWindow, "'s move: ");
     wrefresh(mInputWindow);
 
     int i = 0;
@@ -300,10 +305,10 @@ void UI::message(const std::string& m, const bool& pause)
     }
 }
 
-void UI::log(const int& player, const Move& move)
+void UI::log(const bool& playerOne, const Move& move)
 {
     // add new log entry to front
-    mLog.emplace_front(player, move);
+    mLog.emplace_front(playerOne, move);
 
     // pop back to maintain size
     if (mLog.size() > LOG_H - 2 * LOG_B) {
@@ -315,8 +320,8 @@ void UI::log(const int& player, const Move& move)
     wstandout(mLogWindow);
 
     for (auto& it : mLog) {
-        wprintw(mLogWindow, "P%i: %c%c %c%c",
-                it.first,
+        waddch(mLogWindow, getPlayerDisplayName(it.first)[0] | getPlayerDisplayAttributes(it.first));
+        wprintw(mLogWindow, ": %c%c %c%c",
                 'A' + it.second.mStartPos / BOARD_COLS, '1' + it.second.mStartPos % BOARD_COLS,
                 'A' + it.second.mEndPos / BOARD_COLS, '1' + it.second.mEndPos % BOARD_COLS);
         wstandend(mLogWindow);
@@ -373,7 +378,7 @@ unsigned int UI::pickMenuOption(WINDOW* win, const int& y, const int& x, const c
 void UI::drawMenu(WINDOW* win, const int& y, const int& x, const char** opts, const unsigned int& numOpts, const unsigned int& selected)
 {
     // print all available options
-    for (int i = 0; i < numOpts; ++i) {
+    for (unsigned int i = 0; i < numOpts; ++i) {
         mvwprintw(win, y + i, x, opts[i]);
     }
 
@@ -392,4 +397,13 @@ const char* UI::getPlayerDisplayName(const bool& playerOne)
     }
 
     return "RED";
+}
+
+int UI::getPlayerDisplayAttributes(const bool& playerOne)
+{
+    if (playerOne) {
+        return COLOR_PAIR(Color::CELL_GREEN_BLACK);
+    }
+
+    return COLOR_PAIR(Color::CELL_RED_BLACK);
 }

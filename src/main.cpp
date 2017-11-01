@@ -33,10 +33,10 @@ int main(int argc, char** argv)
 
     GameManager* gameManager = GameManager::GetInstance();
     Board gameBoard = Board(true); // TODO: refactor this ui=true parameter
-    GameManager::Outcome outcome;
+    GameManager::Outcome outcome = GameManager::Outcome::None;
     unsigned int currentPlayer = 0; // green goes first
 
-    while (true) {
+    while (outcome == GameManager::Outcome::None) {
         Player* player = players[currentPlayer];
         bool isPlayerOne = player->IsPlayerOne();
         Move move;
@@ -47,23 +47,27 @@ int main(int argc, char** argv)
             validMove = gameManager->IsValidMove(gameBoard, move, isPlayerOne);
 
             if (!validMove) {
-                if (dynamic_cast<HumanPlayer*>(player)) {
-                    // If player is human, allow for error
+                if (move == Move(0, 0)) {
+                    // Move A1 A1 (0, 0) signals forfeit
+                    outcome = isPlayerOne ? GameManager::Outcome::Player2Win
+                                          : GameManager::Outcome::Player1Win;
+                } else if (dynamic_cast<HumanPlayer*>(player)) {
+                    // If player is human, allow for input error
                     ui->message("Invalid move!", true);
                 } else {
                     // If player is AI, error is exception
                     throw std::runtime_error("AI returned incorrect move");
                 }
             }
-        } while (!validMove);
+        } while (!validMove && outcome != GameManager::Outcome::None);
 
-        outcome = gameManager->PlayMove(gameBoard, move, 1 + isPlayerOne, false);
-        ui->log(2 - isPlayerOne, move);
-
-        // bail out if we have an outcome
+        // bail out early if we have an outcome
         if (outcome != GameManager::Outcome::None) {
             break;
         }
+
+        outcome = gameManager->PlayMove(gameBoard, move, 1 + isPlayerOne, false);
+        ui->log(isPlayerOne, move);
 
         // flip current player
         currentPlayer = 1 - currentPlayer;
