@@ -6,15 +6,14 @@
 class Node
 {
 private:
-    Node* mParent;
-    Node** mChildren;
+    Node* mParent = nullptr;
+    Node** mChildren = nullptr;
     Board mBoard;
     Move mMove;
-    int mChildCount;
+    unsigned int mChildCount = 0;
     int mValue;
     int mDepth;
 public:
-    Node();
     Node(Node* parent, Board board, Move move, int depth);
     ~Node();
 
@@ -26,6 +25,6 @@ public:
     inline Move GetMove() { return mMove; }
     inline int GetValue() { return mValue; }
     inline int GetDepth() { return mDepth; }
-    inline bool IsTerminal() { return mChildren == nullptr; }
+    inline bool IsTerminal() { return mChildCount == 0; }
     inline void SetValue(int value) { mValue = value; }
 };

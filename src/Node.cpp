@@ -2,24 +2,17 @@
 #include "GameManager.h"
 
 #include <list>
+#include <utility>
 #include <vector>
 
-Node::Node()
-{
-    mBoard = Board(false);
-}
-
 Node::Node(Node* parent, Board board, Move move, int depth)
+        : mParent(parent), mBoard(std::move(board)), mMove(move), mDepth(depth)
 {
-    mParent = parent;
-    mBoard = board;
-    mMove = move;
-    mDepth = depth;
 }
 
 Node::~Node()
 {
-    for (int i = 0; i < mChildCount; i++) {
+    for (unsigned int i = 0; i < mChildCount; i++) {
         delete mChildren[i];
     }
 
@@ -28,9 +21,7 @@ Node::~Node()
 
 Node* Node::CreateTree(Board board, int depth, bool playerOne)
 {
-    Node* root = new Node();
-    root->mBoard = board;
-    root->mDepth = 0;
+    Node* root = new Node(nullptr, std::move(board), {}, 0);
     std::list<int> pos = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1};
 
     auto* nodesAtDepth = new std::vector<Node*>[depth + 1];
@@ -58,7 +49,7 @@ Node* Node::CreateTree(Board board, int depth, bool playerOne)
                     }
                 }
 
-                nodesAtDepth[i][j]->mChildCount = moves.size();
+                nodesAtDepth[i][j]->mChildCount = static_cast<unsigned int>(moves.size());
 
                 int index = 0;
                 nodesAtDepth[i][j]->mChildren = new Node*[nodesAtDepth[i][j]->mChildCount];
