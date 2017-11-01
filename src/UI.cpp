@@ -244,15 +244,13 @@ char UI::getAIPlayer()
     mvwprintw(mInputWindow, INPUT_B, INPUT_B, "AI Red (R) or Green (G) ?: ");
     wrefresh(mInputWindow);
 
-
     bool accepted = false;
     int ch = wgetch(mInputWindow);
 
     if (ch == KEY_BACKSPACE || ch == 127 || ch == 8) {
         mvwaddch(mInputWindow, getcury(mInputWindow), getcurx(mInputWindow) - 1, ' ');
         wmove(mInputWindow, getcury(mInputWindow), getcurx(mInputWindow) - 1);
-    }
-    else {
+    } else {
         ch = toupper(ch);
         accepted = true;
     }

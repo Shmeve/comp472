@@ -31,17 +31,15 @@ Move AIPlayer::GetMove(Board board)
     while (!tree.empty()) {
         Node* node = tree.front();
 
-        if (depth != node->GetDepth())
-        {
+        if (depth != node->GetDepth()) {
             depth = node->GetDepth();
             prevParent = node->GetParent();
             file << "/n";
         }
 
-        if (prevParent == node->GetParent())
+        if (prevParent == node->GetParent()) {
             file << " ";
-        else
-        {
+        } else {
             file << ",";
         }
 
@@ -58,8 +56,9 @@ Move AIPlayer::GetMove(Board board)
     file.close();
 
     for (int i = 0; i < root->GetChildCount(); i++) {
-        if (root->GetChild(i)->GetValue() == value)
+        if (root->GetChild(i)->GetValue() == value) {
             return root->GetChild(i)->GetMove();
+        }
     }
 
     return Move(0, 0); //THIS IS BAD
@@ -67,23 +66,19 @@ Move AIPlayer::GetMove(Board board)
 
 int AIPlayer::MiniMax(Node* node, int depth, bool maxPlayer)
 {
-    if (depth == 0 || node->IsTerminal())
-    {
+    if (depth == 0 || node->IsTerminal()) {
         node->SetValue(EvaluateHeuristic(node->GetBoard()));
         return node->GetValue();
     }
 
-    if (maxPlayer)
-    {
+    if (maxPlayer) {
         int max = INT_MIN;
         for (int i = 0; i < node->GetChildCount(); i++) {
             max = std::max(max, MiniMax(node->GetChild(i), depth - 1, !maxPlayer));
         }
         node->SetValue(max);
         return max;
-    }
-    else
-    {
+    } else {
         int min = INT_MAX;
         for (int i = 0; i < node->GetChildCount(); i++) {
             min = std::min(min, MiniMax(node->GetChild(i), depth - 1, !maxPlayer));

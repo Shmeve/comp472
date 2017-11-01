@@ -10,8 +10,7 @@ Board::Board(bool ui)
     mUpdateUI = ui;
 
     SetCell(mSize / 2, 0); // middle cell is empty
-    for (unsigned int i = 0; i < mSize; ++i)
-    {
+    for (unsigned int i = 0; i < mSize; ++i) {
         int row = i / BOARD_COLS, col = i % BOARD_COLS;
 
         if (row < BOARD_ROWS / 2) {
@@ -30,11 +29,11 @@ Board::Board(bool ui)
 Board::Board(const Board& other)
 {
     mCells = new int[mSize];
-    memcpy(mCells, other.mCells, mSize*sizeof(int));
+    memcpy(mCells, other.mCells, mSize * sizeof(int));
     mUpdateUI = other.mUpdateUI;
 }
 
-Board::~Board()
+Board::~Board() noexcept
 {
     delete mCells;
 }
@@ -61,8 +60,10 @@ Board& Board::operator=(Board&& other) noexcept
 
 int Board::GetPlayer(unsigned int idx)
 {
-    if (idx < 0 || idx > mSize)
+    if (idx > mSize) {
         return 0;
+    }
+
     return mCells[idx];
 }
 
@@ -80,6 +81,8 @@ void Board::Move(int from, int to)
 void Board::SetCell(const int& idx, const int& val)
 {
     mCells[idx] = val;
-    if (mUpdateUI)
+
+    if (mUpdateUI) {
         UI::getInstance()->setCell(idx / BOARD_COLS, idx % BOARD_COLS, val);
+    }
 }

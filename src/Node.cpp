@@ -31,34 +31,33 @@ Node* Node::CreateTree(Board board, int depth, bool playerOne)
     Node* root = new Node();
     root->mBoard = board;
     root->mDepth = 0;
-    std::list<int> pos = { -BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1 };
+    std::list<int> pos = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1};
 
-    std::vector<Node*>* nodesAtDepth = new std::vector<Node*>[depth + 1];
+    auto* nodesAtDepth = new std::vector<Node*>[depth + 1];
     nodesAtDepth[0].push_back(root);
 
     // Iterate through depth levels
     for (int i = 0; i <= depth; i++) {
         // Iterate through nodes in depth i
         for (unsigned int j = 0; j < nodesAtDepth[i].size(); j++) {
-            if (i == depth) // If depth is lowest depth, NO CHILDREN
-            {
+            if (i == depth) {
+                // If depth is lowest depth, NO CHILDREN
                 nodesAtDepth[i][j]->mChildren = nullptr;
-            }
-            else
-            {
+            } else {
                 std::list<Move> moves;
 
                 // Generate moves
                 for (int k = 0; k < BOARD_ROWS * BOARD_COLS; k++) {
-                    if (nodesAtDepth[i][j]->mBoard.GetCells()[k] == (i % 2 ? (playerOne ? 2 : 1) : (playerOne ? 1 : 2)))
-                    {
+                    if (nodesAtDepth[i][j]->mBoard.GetCells()[k] == (i % 2 ? (playerOne ? 2 : 1) : (playerOne ? 1 : 2))) {
                         for (int n : pos) {
                             Move move = Move(k, k + n);
-                            if (GameManager::GetInstance()->IsValidMove(nodesAtDepth[i][j]->mBoard, move, (i % 2) ? !playerOne : playerOne))
+                            if (GameManager::GetInstance()->IsValidMove(nodesAtDepth[i][j]->mBoard, move, (i % 2) ? !playerOne : playerOne)) {
                                 moves.push_back(move);
+                            }
                         }
                     }
                 }
+
                 nodesAtDepth[i][j]->mChildCount = moves.size();
 
                 int index = 0;

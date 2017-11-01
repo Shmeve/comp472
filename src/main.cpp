@@ -19,22 +19,18 @@ int main(int argc, char** argv)
 
     //Get desired AI colour
     char AIColourChar = ui->getAIPlayer();
-    while (AIColourChar != 'R' && AIColourChar != 'G')
-    {
+    while (AIColourChar != 'R' && AIColourChar != 'G') {
         AIColourChar = ui->getAIPlayer();
     }
 
     //Game Setup
-    Player** players = new Player*[2];
+    Player** players = new Player* [2];
 
     //Create 2 players
-    if (AIColourChar == 'R')
-    {
+    if (AIColourChar == 'R') {
         players[0] = new HumanPlayer(true);  // GREEN
         players[1] = new NaivePlayer(false); // RED
-    }
-    else
-    {
+    } else {
         players[0] = new NaivePlayer(true);  // GREEN
         players[1] = new HumanPlayer(false); // RED
     }
@@ -43,24 +39,19 @@ int main(int argc, char** argv)
     Board gameBoard = Board(true);
 
     GameManager::Outcome outcome = GameManager::Outcome::None;
-    while (true)
-    {
+    while (true) {
         Move p1Move = players[0]->GetMove(gameBoard);
         bool validMove = GameManager::GetInstance()->IsValidMove(gameBoard, p1Move, players[0]->IsPlayerOne());
         //If player is human, allow for error
-        if (dynamic_cast<HumanPlayer*>(players[0]))
-        {
-            while (!validMove)
-            {
+        if (dynamic_cast<HumanPlayer*>(players[0])) {
+            while (!validMove) {
                 ui->message("Invalid move!", true);
                 p1Move = players[0]->GetMove(gameBoard);
                 validMove = GameManager::GetInstance()->IsValidMove(gameBoard, p1Move, players[0]->IsPlayerOne());
             }
-        }
-        else //If player is AI, error is failure
+        } else //If player is AI, error is failure
         {
-            if (!validMove)
-            {
+            if (!validMove) {
                 outcome = GameManager::Outcome::Player2Win;
                 break;
             }
@@ -69,38 +60,37 @@ int main(int argc, char** argv)
         outcome = GameManager::GetInstance()->PlayMove(gameBoard, p1Move, 2, false);
         ui->log(1, p1Move);
 
-        if (outcome != GameManager::Outcome::None)
+        if (outcome != GameManager::Outcome::None) {
             break;
+        }
 
         Move p2Move = players[1]->GetMove(gameBoard);
         validMove = GameManager::GetInstance()->IsValidMove(gameBoard, p2Move, players[1]->IsPlayerOne());
         //If player is human, allow for error
-        if (dynamic_cast<HumanPlayer*>(players[1]))
-        {
-            while (!validMove)
-            {
+        if (dynamic_cast<HumanPlayer*>(players[1])) {
+            while (!validMove) {
                 ui->message("Invalid move!", true);
                 p2Move = players[1]->GetMove(gameBoard);
                 validMove = GameManager::GetInstance()->IsValidMove(gameBoard, p2Move, players[1]->IsPlayerOne());
             }
-        }
-        else //If player is AI, error is failure
+        } else //If player is AI, error is failure
         {
-            if (!validMove)
-            {
+            if (!validMove) {
                 outcome = GameManager::Outcome::Player1Win;
                 break;
             }
         }
 
-        if (outcome != GameManager::Outcome::None)
+        if (outcome != GameManager::Outcome::None) {
             break;
+        }
 
         outcome = GameManager::GetInstance()->PlayMove(gameBoard, p2Move, 1, false);
         ui->log(2, p2Move);
 
-        if (outcome != GameManager::Outcome::None)
+        if (outcome != GameManager::Outcome::None) {
             break;
+        }
     }
 
     std::string message;
