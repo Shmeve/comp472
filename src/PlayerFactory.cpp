@@ -1,7 +1,7 @@
 #include "PlayerFactory.h"
 
 #include <string.h>
-#include <exception>
+#include <stdexcept>
 
 #include "HumanPlayer.h"
 #include "NaivePlayer.h"
