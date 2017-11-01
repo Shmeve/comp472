@@ -1,25 +1,40 @@
 #include <iostream>
+#include <cstdlib>
 
 #include "UI.h"
 #include "Board.h"
 
+// Board window
 const int BOARD_B = 1;
 const int BOARD_H = BOARD_ROWS * 3 /*height*/ + BOARD_B * 2 /*border*/;
 const int BOARD_W = BOARD_COLS * 3 /*height*/ + BOARD_B * 2 /*border*/;
 const int BOARD_X = 0;
 const int BOARD_Y = 0;
 
+// Input window
 const int INPUT_B = 1;
 const int INPUT_H = 1 /*height*/ + INPUT_B * 2 /*border*/;
 const int INPUT_W = BOARD_W;
 const int INPUT_X = 0;
 const int INPUT_Y = BOARD_H;
 
+// Log window
 const int LOG_B = 1;
 const int LOG_H = BOARD_H + INPUT_H /*height*/;
 const int LOG_W = 9 /*width*/ + LOG_B * 2 /*border*/;
 const int LOG_X = BOARD_W;
 const int LOG_Y = 0;
+
+// Player window
+const int PLAYER_B = 1;
+const int PLAYER_H = BOARD_H + INPUT_H - 6;
+const int PLAYER_W = BOARD_W + LOG_W;
+const int PLAYER_X = 0;
+const int PLAYER_Y = 6;
+
+// Physical window
+const int WINDOW_H = BOARD_H + INPUT_H;
+const int WINDOW_W = BOARD_W + LOG_W;
 
 UI* UI::mInstance = nullptr;
 
@@ -59,7 +74,7 @@ void UI::init()
     {
         PDC_set_title("Armadillo");
         char* cmd = new char[100];
-        sprintf(cmd, "mode con cols=%d lines=%d", BOARD_W + LOG_W, BOARD_H + INPUT_H);
+        sprintf(cmd, "mode con cols=%d lines=%d", WINDOW_W, WINDOW_H);
         system(cmd);
         delete[] cmd;
     }
@@ -85,12 +100,37 @@ void UI::init()
     init_pair(Color::DEFAULT, COLOR_WHITE, COLOR_BLACK);
     init_pair(Color::CELL_EMPTY_BLACK, COLOR_BLACK, COLOR_BLACK);
     init_pair(Color::CELL_EMPTY_WHITE, COLOR_WHITE, COLOR_WHITE);
-    init_pair(Color::CELL_P1_BLACK, COLOR_RED, COLOR_BLACK);
-    init_pair(Color::CELL_P1_WHITE, COLOR_RED, COLOR_WHITE);
-    init_pair(Color::CELL_P2_BLACK, COLOR_GREEN, COLOR_BLACK);
-    init_pair(Color::CELL_P2_WHITE, COLOR_GREEN, COLOR_WHITE);
+    init_pair(Color::CELL_GREEN_BLACK, COLOR_GREEN, COLOR_BLACK);
+    init_pair(Color::CELL_GREEN_WHITE, COLOR_GREEN, COLOR_WHITE);
+    init_pair(Color::CELL_RED_BLACK, COLOR_RED, COLOR_BLACK);
+    init_pair(Color::CELL_RED_WHITE, COLOR_RED, COLOR_WHITE);
 
     refresh();
+}
+
+void UI::mainMenu()
+{
+    const char logo[][30] = {R"(   ___                       )",
+                             R"(  / _ )___  ___  ___ ___ ___ )",
+                             R"( / _  / _ \/ _ \/_ // -_) -_))",
+                             R"(/____/\___/_//_//__/\__/\__/ )"};
+
+    int padding = (WINDOW_W - 30) / 2;
+    move(1, 0);
+    attron(A_BOLD);
+    for (auto& line : logo) {
+        mvaddstr(getcury(stdscr), padding + 1, line);
+        move(getcury(stdscr) + 1, getcurx(stdscr));
+    }
+    attroff(A_BOLD);
+
+    refresh();
+}
+
+void UI::startGame()
+{
+    destroyWindow(mPlayerSelectWindow);
+    mPlayerSelectWindow = nullptr;
 
     /*
      * board window init
@@ -165,10 +205,10 @@ void UI::setCell(const int& y, const int& x, const int& val)
             color = isBlack ? Color::CELL_EMPTY_BLACK : Color::CELL_EMPTY_WHITE;
             break;
         case 1:
-            color = isBlack ? Color::CELL_P1_BLACK : Color::CELL_P1_WHITE;
+            color = isBlack ? Color::CELL_GREEN_BLACK : Color::CELL_GREEN_WHITE;
             break;
         case 2:
-            color = isBlack ? Color::CELL_P2_BLACK : Color::CELL_P2_WHITE;
+            color = isBlack ? Color::CELL_RED_BLACK : Color::CELL_RED_WHITE;
             break;
     }
 
@@ -190,13 +230,33 @@ void UI::setCell(const int& y, const int& x, const int& val)
     wrefresh(mBoardWindow);
 }
 
+unsigned int UI::selectPlayer(const char** opts, const unsigned int& numOpts, const bool& playerOne)
+{
+    mPlayerSelectWindow = createWindow(PLAYER_H, PLAYER_W, PLAYER_Y, PLAYER_X);
+
+    const char* playerName = getPlayerDisplayName(playerOne);
+    const int attr = getPlayerDisplayAttributes(playerOne);
+
+    mvwprintw(mPlayerSelectWindow, 0, 1, "Select a %s player", playerName);
+    wattron(mPlayerSelectWindow, attr);
+    mvwaddstr(mPlayerSelectWindow, 0, 10, playerName);
+    wattroff(mPlayerSelectWindow, attr);
+
+    return pickMenuOption(mPlayerSelectWindow, 1, 2, opts, numOpts);
+}
+
 std::string UI::getMove(const bool& playerOne)
 {
+    const int attr = getPlayerDisplayAttributes(playerOne);
+
     std::string move(4, ' ');
 
     eraseWindow(mInputWindow);
     mvwaddstr(mInputWindow, 0, 1, "Command");
-    mvwprintw(mInputWindow, INPUT_B, INPUT_B, "P%i's move: ", 2 - playerOne);
+    wattron(mInputWindow, attr);
+    mvwaddstr(mInputWindow, INPUT_B, INPUT_B, getPlayerDisplayName(playerOne));
+    wattroff(mInputWindow, attr);
+    waddstr(mInputWindow, "'s move: ");
     wrefresh(mInputWindow);
 
     int i = 0;
@@ -245,10 +305,10 @@ void UI::message(const std::string& m, const bool& pause)
     }
 }
 
-void UI::log(const int& player, const Move& move)
+void UI::log(const bool& playerOne, const Move& move)
 {
     // add new log entry to front
-    mLog.emplace_front(player, move);
+    mLog.emplace_front(playerOne, move);
 
     // pop back to maintain size
     if (mLog.size() > LOG_H - 2 * LOG_B) {
@@ -260,8 +320,8 @@ void UI::log(const int& player, const Move& move)
     wstandout(mLogWindow);
 
     for (auto& it : mLog) {
-        wprintw(mLogWindow, "P%i: %c%c %c%c",
-                it.first,
+        waddch(mLogWindow, getPlayerDisplayName(it.first)[0] | getPlayerDisplayAttributes(it.first));
+        wprintw(mLogWindow, ": %c%c %c%c",
                 'A' + it.second.mStartPos / BOARD_COLS, '1' + it.second.mStartPos % BOARD_COLS,
                 'A' + it.second.mEndPos / BOARD_COLS, '1' + it.second.mEndPos % BOARD_COLS);
         wstandend(mLogWindow);
@@ -269,4 +329,81 @@ void UI::log(const int& player, const Move& move)
     }
 
     wrefresh(mLogWindow);
+}
+
+unsigned int UI::pickMenuOption(WINDOW* win, const int& y, const int& x, const char** opts, const unsigned int& numOpts)
+{
+    unsigned int selected = 0;
+
+    drawMenu(win, y, x, opts, numOpts, selected);
+
+    keypad(win, true);
+
+    while (true) {
+        bool done = false;
+
+        switch (wgetch(win)) {
+            case KEY_DOWN:
+                if (selected < numOpts - 1) {
+                    ++selected;
+                } else {
+                    selected = 0; // wraparound
+                }
+                break;
+            case KEY_UP:
+                if (selected > 0) {
+                    --selected;
+                } else {
+                    selected = numOpts - 1; // wraparound
+                }
+                break;
+            case KEY_ENTER:
+            case 10:
+                done = true;
+                break;
+            default:
+                break;
+        }
+
+        drawMenu(win, y, x, opts, numOpts, selected);
+
+        if (done) {
+            break;
+        }
+    }
+
+    return selected;
+}
+
+void UI::drawMenu(WINDOW* win, const int& y, const int& x, const char** opts, const unsigned int& numOpts, const unsigned int& selected)
+{
+    // print all available options
+    for (unsigned int i = 0; i < numOpts; ++i) {
+        mvwprintw(win, y + i, x, opts[i]);
+    }
+
+    // highlight selected option
+    wstandout(win);
+    mvwprintw(win, y + selected, x, opts[selected]);
+    wstandend(win);
+
+    wrefresh(win);
+}
+
+const char* UI::getPlayerDisplayName(const bool& playerOne)
+{
+    if (playerOne) {
+        return "GREEN";
+    }
+
+    return "RED";
+}
+
+int UI::getPlayerDisplayAttributes(const bool& playerOne)
+{
+    if (playerOne) {
+        return COLOR_PAIR(Color::CELL_GREEN_BLACK);
+    }
+
+    return COLOR_PAIR(Color::CELL_RED_BLACK);
 }

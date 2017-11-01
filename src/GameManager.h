@@ -10,7 +10,6 @@ private:
     int mCol;
     int mRow;
     int mBoardSize;
-    Board* mBoard;
     int mTokens[2];
     int mConsecutiveNoAttack;
 
@@ -29,8 +28,8 @@ public:
     static GameManager* GetInstance();
 
     Outcome EvaluateWinningCondition();
-    bool IsValidMove(const Move& move, bool playerOne);
-    Outcome PlayMove(const Move& move, int opponent);
-    void Attack(const Move& move, int opponent);
-    int Eliminate(int currentPos, int direction, int opponent);
+    bool IsValidMove(Board& board, const Move& move, bool playerOne);
+    Outcome PlayMove(Board& board, const Move& move, int opponent, bool ai);
+    void Attack(Board& board, const Move& move, int opponent, bool ai);
+    int Eliminate(Board& board, int currentPos, int direction, int opponent, bool ai);
 };

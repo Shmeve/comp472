@@ -7,5 +7,5 @@ class HumanPlayer : public Player
 public:
     HumanPlayer() : Player() {};
     HumanPlayer(bool playerOne) : Player(playerOne) {};
-    Move GetMove();
+    Move GetMove(Board board);
 };

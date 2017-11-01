@@ -1,10 +1,12 @@
 #include <iostream>
 #include <curses.h>
+#include <stdexcept>
 #include <string.h>
 
 #include "UI.h"
-#include "HumanPlayer.h"
 #include "GameManager.h"
+#include "PlayerFactory.h"
+#include "HumanPlayer.h"
 
 int main(int argc, char** argv)
 {
@@ -16,54 +18,70 @@ int main(int argc, char** argv)
     UI* ui = UI::getInstance();
     ui->init();
 
-    //Game Setup
-    Player** players = new Player*[2];
+    ui->mainMenu();
 
-    //Create 2 human players
-    players[0] = new HumanPlayer(true);
-    players[1] = new HumanPlayer(false);
+    unsigned int numOpts;
+    auto opts = PlayerFactory::Options(numOpts);
+
+    auto greenPlayerType = ui->selectPlayer(opts, numOpts, true);
+    auto redPlayerType = ui->selectPlayer(opts, numOpts, false);
+
+    ui->startGame();
+
+    // Game Setup
+    Player* players[2] = {PlayerFactory::Create(opts[greenPlayerType], true),
+                          PlayerFactory::Create(opts[redPlayerType], false)};
 
     GameManager* gameManager = GameManager::GetInstance();
-
+    Board gameBoard = Board(true); // TODO: refactor this ui=true parameter
     GameManager::Outcome outcome = GameManager::Outcome::None;
-    while (true)
-    {
-        Move p1Move = players[0]->GetMove();
-        while (!GameManager::GetInstance()->IsValidMove(p1Move, true))
-        {
-            ui->message("Invalid move!", true);
-            p1Move = players[0]->GetMove();
+    unsigned int currentPlayer = 0; // green goes first
+
+    while (outcome == GameManager::Outcome::None) {
+        Player* player = players[currentPlayer];
+        bool isPlayerOne = player->IsPlayerOne();
+        Move move;
+        bool validMove;
+
+        do {
+            move = player->GetMove(gameBoard);
+            validMove = gameManager->IsValidMove(gameBoard, move, isPlayerOne);
+
+            if (!validMove) {
+                if (move == Move(0, 0)) {
+                    // Move A1 A1 (0, 0) signals forfeit
+                    outcome = isPlayerOne ? GameManager::Outcome::Player2Win
+                                          : GameManager::Outcome::Player1Win;
+                } else if (dynamic_cast<HumanPlayer*>(player)) {
+                    // If player is human, allow for input error
+                    ui->message("Invalid move!", true);
+                } else {
+                    // If player is AI, error is exception
+                    throw std::runtime_error("AI returned incorrect move");
+                }
+            }
+        } while (!validMove && outcome != GameManager::Outcome::None);
+
+        // bail out early if we have an outcome
+        if (outcome != GameManager::Outcome::None) {
+            break;
         }
 
-        outcome = GameManager::GetInstance()->PlayMove(p1Move, 2);
-        ui->log(1, p1Move);
+        outcome = gameManager->PlayMove(gameBoard, move, 1 + isPlayerOne, false);
+        ui->log(isPlayerOne, move);
 
-        if (outcome != GameManager::Outcome::None)
-            break;
-
-        // TODO: If AI makes mistake, LOSE
-        Move p2Move = players[1]->GetMove();
-        while (!GameManager::GetInstance()->IsValidMove(p2Move, false))
-        {
-            ui->message("Invalid move!", true);
-            p2Move = players[1]->GetMove();
-        }
-
-        outcome = GameManager::GetInstance()->PlayMove(p2Move, 1);
-        ui->log(2, p2Move);
-
-        if (outcome != GameManager::Outcome::None)
-            break;
+        // flip current player
+        currentPlayer = 1 - currentPlayer;
     }
 
     std::string message;
 
     switch (outcome) {
         case GameManager::Outcome::Player1Win:
-            message = "Player 1 wins!";
+            message = "Green wins!";
             break;
         case GameManager::Outcome::Player2Win:
-            message = "Player 2 wins!";
+            message = "Red wins!";
             break;
         case GameManager::Outcome::Draw:
             message = "It's a draw!";
