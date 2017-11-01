@@ -1,6 +1,7 @@
 #include <iostream>
 #include <curses.h>
 #include <stdexcept>
+#include <string.h>
 
 #include "UI.h"
 #include "GameManager.h"

@@ -136,15 +136,15 @@ void GameManager::Attack(Board& board, const Move& move, int opponent, bool ai)
     // Forward attack check
     if (board.GetPlayer(move.mStartPos + 2 * direction) == opponent) {
         eliminated = Eliminate(board, move.mEndPos, direction, opponent, ai);
-        if (!ai) {
+        if (!ai && eliminated > 0) {
             mConsecutiveNoAttack = 0;
         }
     }
 
     // Backward attack check and no forward attack
     if (board.GetPlayer(move.mStartPos - direction) == opponent && eliminated == 0) {
-        Eliminate(board, move.mStartPos, -direction, opponent, ai);
-        if (!ai) {
+        eliminated = Eliminate(board, move.mStartPos, -direction, opponent, ai);
+        if (!ai && eliminated > 0) {
             mConsecutiveNoAttack = 0;
         }
     }
