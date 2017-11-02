@@ -7,10 +7,10 @@
 Board::Board(const bool& ui)
         : mUpdateUI(ui)
 {
-    mCells = new cell_t[mSize];
+    mCells = new cell_t[BOARD_SIZE];
 
-    SetCell(mSize / 2, 0); // middle cell is empty
-    for (idx_t i = 0; i < mSize; ++i) {
+    SetCell(BOARD_SIZE / 2, 0); // middle cell is empty
+    for (idx_t i = 0; i < BOARD_SIZE; ++i) {
         int row = i / BOARD_COLS, col = i % BOARD_COLS;
 
         if (row < BOARD_ROWS / 2) {
@@ -28,8 +28,8 @@ Board::Board(const bool& ui)
 
 Board::Board(const Board& other)
 {
-    mCells = new cell_t[mSize];
-    memcpy(mCells, other.mCells, mSize * sizeof(cell_t));
+    mCells = new cell_t[BOARD_SIZE];
+    memcpy(mCells, other.mCells, BOARD_SIZE * sizeof(cell_t));
     mUpdateUI = other.mUpdateUI;
 }
 
@@ -59,9 +59,9 @@ Board& Board::operator=(Board&& other) noexcept
     return *this;
 }
 
-int Board::GetCell(const idx_t& idx)
+int Board::GetCell(const idx_t& idx) const
 {
-    if (idx > mSize) {
+    if (idx > BOARD_SIZE) {
         return 0;
     }
 

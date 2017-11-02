@@ -4,6 +4,7 @@
 
 #define BOARD_ROWS 5
 #define BOARD_COLS 9
+#define BOARD_SIZE (BOARD_ROWS * BOARD_COLS)
 
 typedef unsigned int idx_t;
 typedef uint8_t cell_t;
@@ -12,7 +13,6 @@ class Board
 {
 private:
     uint8_t* mCells;
-    const idx_t mSize = BOARD_ROWS * BOARD_COLS;
     bool mUpdateUI;
 public:
     Board() : Board(true) {};
@@ -23,8 +23,8 @@ public:
     Board& operator=(const Board& other);
     Board& operator=(Board&& other) noexcept;
 
-    bool IsBlack(const idx_t& idx) { return idx % 2 == 0; }
-    int GetCell(const idx_t& idx);
+    bool IsBlack(const idx_t& idx) const { return idx % 2 == 0; }
+    int GetCell(const idx_t& idx) const;
     void Clear(const idx_t& idx);
     void Move(const idx_t& from, const idx_t& to);
     void SetCell(const idx_t& idx, const uint8_t& val);
