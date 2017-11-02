@@ -4,13 +4,13 @@
 #include <cstdlib>
 #include <cstring>
 
-Board::Board(bool ui)
+Board::Board(const bool& ui)
+        : mUpdateUI(ui)
 {
-    mCells = new int[mSize];
-    mUpdateUI = ui;
+    mCells = new cell_t[mSize];
 
     SetCell(mSize / 2, 0); // middle cell is empty
-    for (unsigned int i = 0; i < mSize; ++i) {
+    for (idx_t i = 0; i < mSize; ++i) {
         int row = i / BOARD_COLS, col = i % BOARD_COLS;
 
         if (row < BOARD_ROWS / 2) {
@@ -28,19 +28,20 @@ Board::Board(bool ui)
 
 Board::Board(const Board& other)
 {
-    mCells = new int[mSize];
-    memcpy(mCells, other.mCells, mSize * sizeof(int));
+    mCells = new cell_t[mSize];
+    memcpy(mCells, other.mCells, mSize * sizeof(cell_t));
     mUpdateUI = other.mUpdateUI;
+}
+
+Board::Board(Board&& other) noexcept
+        : mCells(other.mCells), mUpdateUI(other.mUpdateUI)
+{
+    other.mCells = nullptr;
 }
 
 Board::~Board() noexcept
 {
     delete mCells;
-}
-
-Board::Board(Board&& other) noexcept : mCells(other.mCells), mUpdateUI(other.mUpdateUI)
-{
-    other.mCells = nullptr;
 }
 
 Board& Board::operator=(const Board& other)
@@ -58,7 +59,7 @@ Board& Board::operator=(Board&& other) noexcept
     return *this;
 }
 
-int Board::GetPlayer(unsigned int idx)
+int Board::GetCell(const idx_t& idx)
 {
     if (idx > mSize) {
         return 0;
@@ -67,18 +68,18 @@ int Board::GetPlayer(unsigned int idx)
     return mCells[idx];
 }
 
-void Board::Clear(int idx)
+void Board::Clear(const idx_t& idx)
 {
     SetCell(idx, 0);
 }
 
-void Board::Move(int from, int to)
+void Board::Move(const idx_t& from, const idx_t& to)
 {
     SetCell(to, mCells[from]);
     SetCell(from, 0);
 }
 
-void Board::SetCell(const int& idx, const int& val)
+void Board::SetCell(const idx_t& idx, const cell_t& val)
 {
     mCells[idx] = val;
 

@@ -55,8 +55,8 @@ bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
 
     //Check that the start cell has the player's token and the end cell is empty
     //Assuming: 0 -> empty, 1 -> playerOne, 2-> playerTwo
-    int startPlayer = board.GetPlayer(move.mStartPos);
-    int endPlayer = board.GetPlayer(move.mEndPos);
+    int startPlayer = board.GetCell(move.mStartPos);
+    int endPlayer = board.GetCell(move.mEndPos);
 
     if (endPlayer != 0) {
         return false;
@@ -134,7 +134,7 @@ void GameManager::Attack(Board& board, const Move& move, int opponent, bool ai)
     int eliminated = 0;
 
     // Forward attack check
-    if (board.GetPlayer(move.mStartPos + 2 * direction) == opponent) {
+    if (board.GetCell(move.mStartPos + 2 * direction) == opponent) {
         eliminated = Eliminate(board, move.mEndPos, direction, opponent, ai);
         if (!ai && eliminated > 0) {
             mConsecutiveNoAttack = 0;
@@ -142,7 +142,7 @@ void GameManager::Attack(Board& board, const Move& move, int opponent, bool ai)
     }
 
     // Backward attack check and no forward attack
-    if (board.GetPlayer(move.mStartPos - direction) == opponent && eliminated == 0) {
+    if (board.GetCell(move.mStartPos - direction) == opponent && eliminated == 0) {
         eliminated = Eliminate(board, move.mStartPos, -direction, opponent, ai);
         if (!ai && eliminated > 0) {
             mConsecutiveNoAttack = 0;
@@ -182,7 +182,7 @@ int GameManager::Eliminate(Board& board, int currentPos, int direction, int oppo
     }
 
     //If desired attack position has an opponent, attack and keep going
-    if (board.GetPlayer(desiredEnd) == opponent) {
+    if (board.GetCell(desiredEnd) == opponent) {
         board.Clear(desiredEnd);
         if (!ai) {
             mTokens[opponent - 1]--;

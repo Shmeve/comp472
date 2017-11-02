@@ -39,7 +39,7 @@ Node* Node::CreateTree(Board board, int depth, bool playerOne)
 
                 // Generate moves
                 for (int k = 0; k < BOARD_ROWS * BOARD_COLS; k++) {
-                    if (nodesAtDepth[i][j]->mBoard.GetCells()[k] == (i % 2 ? (playerOne ? 2 : 1) : (playerOne ? 1 : 2))) {
+                    if (nodesAtDepth[i][j]->mBoard.GetCell(k) == (i % 2 ? (playerOne ? 2 : 1) : (playerOne ? 1 : 2))) {
                         for (int n : pos) {
                             Move move = Move(k, k + n);
                             if (GameManager::GetInstance()->IsValidMove(nodesAtDepth[i][j]->mBoard, move, (i % 2) ? !playerOne : playerOne)) {

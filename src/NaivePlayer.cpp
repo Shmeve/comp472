@@ -10,7 +10,7 @@ int NaivePlayer::EvaluateHeuristic(Board& board)
     for (int i = 0; i < BOARD_ROWS * BOARD_COLS; i++) {
         int row = (i / 9) + 1;
         int col = (i % 9) + 1;
-        switch (board.GetCells()[i]) {
+        switch (board.GetCell(i)) {
             case 0:
                 break;
             case 1:
