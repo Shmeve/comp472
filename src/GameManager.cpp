@@ -3,8 +3,14 @@
 
 #include <cmath>
 #include <set>
-using namespace std;
 
+// Black and White:
+// Up: -9, Down: +9, Left: -1, Right +1
+// Black only (corners):
+// TR: -8, TL: -10, BR: +10, BL: +8
+
+std::set<int> blackMoves = {1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1}; /*1, 8, 9, 10*/
+std::set<int> whiteMoves = {1, BOARD_COLS};                                 /*1, 9*/
 
 GameManager* GameManager::mInstance(nullptr);
 
@@ -54,8 +60,8 @@ bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
         return false;
     }
 
-    //Check that the start cell has the player's token and the end cell is empty
-    //Assuming: 0 -> empty, 1 -> playerOne, 2-> playerTwo
+    // Check that the start cell has the player's token and the end cell is empty
+    // Assuming: 0 -> empty, 1 -> playerOne, 2 -> playerTwo
     int startPlayer = board.GetCell(move.mStartPos);
     int endPlayer = board.GetCell(move.mEndPos);
 
@@ -69,16 +75,7 @@ bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
         return false;
     }
 
-    //Check if start -> end is valid given the colour
-
-    //Black and White:
-    //Up: -9, Down: +9, Left: -1, Right +1
-    //Black only (corners):
-    //TR: -8, TL: -10, BR: +10, BL: +8
-
-
-    set<int> blackMoves = {1, mCol - 1, mCol, mCol + 1};  /*1, 8, 9, 10*/
-    set<int> whiteMoves = {1, mCol};                      /*1, 9*/
+    // Check if start -> end is valid given the colour
     int absDirection = abs((int) move.mEndPos - (int) move.mStartPos);
 
     auto blackSearch = blackMoves.find(absDirection);
