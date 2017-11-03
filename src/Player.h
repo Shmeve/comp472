@@ -9,7 +9,7 @@ protected:
     bool mIsPlayerOne;
 public:
     Player() {};
-    Player(bool playerOne) : mIsPlayerOne(playerOne) {};
+    Player(const bool& playerOne) : mIsPlayerOne(playerOne) {};
     inline bool IsPlayerOne() { return mIsPlayerOne; }
     virtual Move GetMove(Board board) = 0;
 };

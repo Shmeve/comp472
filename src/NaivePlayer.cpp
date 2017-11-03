@@ -1,15 +1,16 @@
 #include "NaivePlayer.h"
+#include "Board.h"
 
-int NaivePlayer::EvaluateHeuristic(Board& board)
+int NaivePlayer::EvaluateHeuristic(const Board& board)
 {
     int horizontalGreen = 0;
     int verticalGreen = 0;
     int horizontalRed = 0;
     int verticalRed = 0;
 
-    for (int i = 0; i < BOARD_ROWS * BOARD_COLS; i++) {
-        int row = (i / 9) + 1;
-        int col = (i % 9) + 1;
+    for (idx_t i = 0; i < BOARD_SIZE; ++i) {
+        int row = (i / BOARD_COLS) + 1;
+        int col = (i % BOARD_COLS) + 1;
         switch (board.GetCell(i)) {
             case 0:
                 break;

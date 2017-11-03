@@ -6,7 +6,7 @@ class RemainingTilesPlayer : public AIPlayer
 {
 public:
     RemainingTilesPlayer() : AIPlayer() {};
-    RemainingTilesPlayer(bool playerOne) : AIPlayer(playerOne) {};
+    explicit RemainingTilesPlayer(const bool& playerOne) : AIPlayer(playerOne) {};
 
-    int EvaluateHeuristic(Board& board);
+    virtual int EvaluateHeuristic(const Board& board);
 };

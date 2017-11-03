@@ -1,15 +1,21 @@
 #include "GameManager.h"
-#include <cmath>
+#include "Board.h"
 
+#include <cmath>
 #include <set>
 
-using namespace std;
+// Black and White:
+// Up: -9, Down: +9, Left: -1, Right +1
+// Black only (corners):
+// TR: -8, TL: -10, BR: +10, BL: +8
+
+std::set<int> blackMoves = {1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1}; /*1, 8, 9, 10*/
+std::set<int> whiteMoves = {1, BOARD_COLS};                                 /*1, 9*/
 
 GameManager* GameManager::mInstance(nullptr);
 
-GameManager::GameManager() : mCol(BOARD_COLS), mRow(BOARD_ROWS), mConsecutiveNoAttack(0)
+GameManager::GameManager() : mConsecutiveNoAttack(0)
 {
-    mBoardSize = mRow * mCol;
     mTokens[0] = 22;
     mTokens[1] = 22;
 }
@@ -45,16 +51,13 @@ GameManager::Outcome GameManager::EvaluateWinningCondition()
 
 bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
 {
-    int currPos = move.mStartPos;
-
-    //Check if start and end are on board
-    if (move.mStartPos < 0 || move.mEndPos > mBoardSize - 1
-        || move.mEndPos < 0 || move.mEndPos > mBoardSize - 1) {
+    // Check if start and end are on board
+    if (move.mStartPos >= BOARD_SIZE || move.mEndPos >= BOARD_SIZE) {
         return false;
     }
 
-    //Check that the start cell has the player's token and the end cell is empty
-    //Assuming: 0 -> empty, 1 -> playerOne, 2-> playerTwo
+    // Check that the start cell has the player's token and the end cell is empty
+    // Assuming: 0 -> empty, 1 -> playerOne, 2 -> playerTwo
     int startPlayer = board.GetCell(move.mStartPos);
     int endPlayer = board.GetCell(move.mEndPos);
 
@@ -68,17 +71,8 @@ bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
         return false;
     }
 
-    //Check if start -> end is valid given the colour
-
-    //Black and White:
-    //Up: -9, Down: +9, Left: -1, Right +1
-    //Black only (corners):
-    //TR: -8, TL: -10, BR: +10, BL: +8
-
-    int absDirection = abs(move.mEndPos - move.mStartPos);
-
-    set<int> blackMoves = {1, mCol - 1, mCol, mCol + 1};  /*1, 8, 9, 10*/
-    set<int> whiteMoves = {1, mCol};                      /*1, 9*/
+    // Check if start -> end is valid given the colour
+    int absDirection = abs((int) move.mEndPos - (int) move.mStartPos);
 
     auto blackSearch = blackMoves.find(absDirection);
     auto whiteSearch = whiteMoves.find(absDirection);
@@ -93,11 +87,11 @@ bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
     }
 
     // On left/right moves check that start and end position is on the same row
-    if (absDirection == 1 && move.mEndPos / mCol != move.mStartPos / mCol) {
+    if (absDirection == 1 && move.mEndPos / BOARD_COLS != move.mStartPos / BOARD_COLS) {
         return false;
     }
     // On any diagonal movement check if change in rows is not 1
-    if (absDirection != 1 && absDirection != 9 && abs(move.mEndPos / mCol - move.mStartPos / mCol) != 1) {
+    if (absDirection != 1 && absDirection != 9 && abs((int) (move.mEndPos / BOARD_COLS) - (int) (move.mStartPos / BOARD_COLS)) != 1) {
         return false;
     }
 
@@ -159,25 +153,25 @@ void GameManager::Attack(Board& board, const Move& move, int opponent, bool ai)
 
 int GameManager::Eliminate(Board& board, int currentPos, int direction, int opponent, bool ai)
 {
-    int desiredEnd = currentPos + direction;
+    auto desiredEnd = static_cast<idx_t>(currentPos + direction);
     int absDirection = abs(direction);
 
     //Check if desired attack position is on the board
-    if (desiredEnd < 0 || desiredEnd > mBoardSize - 1) {
+    if (desiredEnd >= BOARD_SIZE) {
         return 0;
     }
 
     //Check to see if desired attack pos is in same line as original
     //This is only a problem if we are moving left or right
-    if (direction == -1 && currentPos % mCol == 0) {
+    if (direction == -1 && currentPos % BOARD_COLS == 0) {
         return 0;
     }
-    if (direction == 1 && currentPos % mCol == mCol - 1) {
+    if (direction == 1 && currentPos % BOARD_COLS == BOARD_COLS - 1) {
         return 0;
     }
 
     // Check to see diagonal attacks only cross 1 column
-    if (absDirection != 1 && absDirection != 9 && abs((desiredEnd % mCol) - (currentPos % mCol)) != 1) {
+    if (absDirection != 1 && absDirection != 9 && abs((desiredEnd % BOARD_COLS) - (currentPos % BOARD_COLS)) != 1) {
         return 0;
     }
 

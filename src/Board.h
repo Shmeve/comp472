@@ -6,7 +6,7 @@
 #define BOARD_COLS 9
 #define BOARD_SIZE (BOARD_ROWS * BOARD_COLS)
 
-typedef unsigned int idx_t;
+typedef uint8_t idx_t;
 typedef uint8_t cell_t;
 
 class Board
