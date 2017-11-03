@@ -7,8 +7,8 @@ class AIPlayer : public Player
 {
 public:
     AIPlayer() : Player() {};
-    AIPlayer(const bool& playerOne) : Player(playerOne) {};
+    explicit AIPlayer(const bool& playerOne) : Player(playerOne) {};
     Move GetMove(Board board);
     int MiniMax(Node* node, int depth, bool max);
-    virtual int EvaluateHeuristic(Board& board) = 0;
+    virtual int EvaluateHeuristic(const Board& board) = 0;
 };

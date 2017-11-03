@@ -20,12 +20,12 @@ Node::~Node()
     delete[] mChildren;
 }
 
-Node* Node::CreateTree(Board board, int depth, bool playerOne)
+Node* Node::CreateTree(const Board& board, int depth, bool playerOne)
 {
     GameManager* gameManager = GameManager::GetInstance();
 
-    Node* root = new Node(nullptr, std::move(board), {}, 0);
     std::list<int> pos = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1};
+    Node* root = new Node(nullptr, board, {}, 0);
 
     auto* nodesAtDepth = new std::vector<Node*>[depth + 1];
     nodesAtDepth[0].push_back(root);
@@ -61,7 +61,7 @@ Node* Node::CreateTree(Board board, int depth, bool playerOne)
                 for (std::list<Move>::const_iterator it = moves.begin(); it != moves.end(); ++it) {
                     Board tmp = nodesAtDepth[i][j]->mBoard;
                     gameManager->PlayMove(tmp, *it, (i % 2 ? (playerOne ? 1 : 2) : (playerOne ? 2 : 1)), true);
-                    nodesAtDepth[i][j]->mChildren[index] = new Node(nodesAtDepth[i][j], tmp, *it, i + 1);
+                    nodesAtDepth[i][j]->mChildren[index] = new Node(nodesAtDepth[i][j], std::move(tmp), *it, i + 1);
                     nodesAtDepth[i + 1].push_back(nodesAtDepth[i][j]->mChildren[index]);
                     index++;
                 }
