@@ -14,9 +14,8 @@ std::set<int> whiteMoves = {1, BOARD_COLS};                                 /*1,
 
 GameManager* GameManager::mInstance(nullptr);
 
-GameManager::GameManager() : mCol(BOARD_COLS), mRow(BOARD_ROWS), mConsecutiveNoAttack(0)
+GameManager::GameManager() : mConsecutiveNoAttack(0)
 {
-    mBoardSize = mRow * mCol;
     mTokens[0] = 22;
     mTokens[1] = 22;
 }
@@ -52,11 +51,8 @@ GameManager::Outcome GameManager::EvaluateWinningCondition()
 
 bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
 {
-    int currPos = move.mStartPos;
-
-    //Check if start and end are on board
-    if (move.mStartPos < 0 || move.mEndPos > mBoardSize - 1
-        || move.mEndPos < 0 || move.mEndPos > mBoardSize - 1) {
+    // Check if start and end are on board
+    if (move.mStartPos >= BOARD_SIZE || move.mEndPos >= BOARD_SIZE) {
         return false;
     }
 
@@ -91,7 +87,7 @@ bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
     }
 
     // On left/right moves check that start and end position is on the same row
-    if (absDirection == 1 && move.mEndPos / mCol != move.mStartPos / mCol) {
+    if (absDirection == 1 && move.mEndPos / BOARD_COLS != move.mStartPos / BOARD_COLS) {
         return false;
     }
     // On any diagonal movement check if change in rows is not 1

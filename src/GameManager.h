@@ -7,9 +7,6 @@ class GameManager
 {
 private:
     static GameManager* mInstance;
-    int mCol;
-    int mRow;
-    int mBoardSize;
     int mTokens[2];
     int mConsecutiveNoAttack;
 
