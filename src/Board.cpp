@@ -61,7 +61,7 @@ Board& Board::operator=(Board&& other) noexcept
 
 int Board::GetCell(const idx_t& idx) const
 {
-    if (idx > BOARD_SIZE) {
+    if (idx >= BOARD_SIZE) {
         return 0;
     }
 

@@ -1,9 +1,10 @@
 #include "GameManager.h"
+#include "Board.h"
+
 #include <cmath>
-
 #include <set>
-
 using namespace std;
+
 
 GameManager* GameManager::mInstance(nullptr);
 
@@ -75,10 +76,10 @@ bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
     //Black only (corners):
     //TR: -8, TL: -10, BR: +10, BL: +8
 
-    int absDirection = abs(move.mEndPos - move.mStartPos);
 
     set<int> blackMoves = {1, mCol - 1, mCol, mCol + 1};  /*1, 8, 9, 10*/
     set<int> whiteMoves = {1, mCol};                      /*1, 9*/
+    int absDirection = abs((int) move.mEndPos - (int) move.mStartPos);
 
     auto blackSearch = blackMoves.find(absDirection);
     auto whiteSearch = whiteMoves.find(absDirection);
@@ -97,7 +98,7 @@ bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
         return false;
     }
     // On any diagonal movement check if change in rows is not 1
-    if (absDirection != 1 && absDirection != 9 && abs(move.mEndPos / mCol - move.mStartPos / mCol) != 1) {
+    if (absDirection != 1 && absDirection != 9 && abs((int) (move.mEndPos / BOARD_COLS) - (int) (move.mStartPos / BOARD_COLS)) != 1) {
         return false;
     }
 
@@ -159,25 +160,25 @@ void GameManager::Attack(Board& board, const Move& move, int opponent, bool ai)
 
 int GameManager::Eliminate(Board& board, int currentPos, int direction, int opponent, bool ai)
 {
-    int desiredEnd = currentPos + direction;
+    auto desiredEnd = static_cast<idx_t>(currentPos + direction);
     int absDirection = abs(direction);
 
     //Check if desired attack position is on the board
-    if (desiredEnd < 0 || desiredEnd > mBoardSize - 1) {
+    if (desiredEnd >= BOARD_SIZE) {
         return 0;
     }
 
     //Check to see if desired attack pos is in same line as original
     //This is only a problem if we are moving left or right
-    if (direction == -1 && currentPos % mCol == 0) {
+    if (direction == -1 && currentPos % BOARD_COLS == 0) {
         return 0;
     }
-    if (direction == 1 && currentPos % mCol == mCol - 1) {
+    if (direction == 1 && currentPos % BOARD_COLS == BOARD_COLS - 1) {
         return 0;
     }
 
     // Check to see diagonal attacks only cross 1 column
-    if (absDirection != 1 && absDirection != 9 && abs((desiredEnd % mCol) - (currentPos % mCol)) != 1) {
+    if (absDirection != 1 && absDirection != 9 && abs((desiredEnd % BOARD_COLS) - (currentPos % BOARD_COLS)) != 1) {
         return 0;
     }
 

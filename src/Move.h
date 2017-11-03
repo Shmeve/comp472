@@ -1,17 +1,18 @@
 #pragma once
 
+#include "Board.h"
+
 struct Move
 {
-    int mStartPos;
-    int mEndPos;
+    idx_t mStartPos;
+    idx_t mEndPos;
 
     Move() : mStartPos(0), mEndPos(0) {}
-    Move(int start, int end) : mStartPos(start), mEndPos(end) {}
+    Move(const idx_t& start, const idx_t& end) : mStartPos(start), mEndPos(end) {}
 
     bool operator==(const Move& rhs) const
     {
-        return mStartPos == rhs.mStartPos &&
-               mEndPos == rhs.mEndPos;
+        return mStartPos == rhs.mStartPos && mEndPos == rhs.mEndPos;
     }
 
     bool operator!=(const Move& rhs) const
