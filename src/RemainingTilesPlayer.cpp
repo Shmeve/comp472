@@ -1,10 +1,11 @@
 #include "RemainingTilesPlayer.h"
+#include "Board.h"
 
-int RemainingTilesPlayer::EvaluateHeuristic(Board& board)
+int RemainingTilesPlayer::EvaluateHeuristic(const Board& board)
 {
     int value = 0;
-    for (int i = 0; i < BOARD_ROWS * BOARD_COLS; i++) {
-        if (board.GetCells()[i] == 2) {
+    for (idx_t i = 0; i < BOARD_ROWS * BOARD_COLS; i++) {
+        if (board.GetCell(i) == 2) {
             value++;
         }
     }
