@@ -6,6 +6,8 @@
 #include <utility>
 #include <vector>
 
+std::list<int> pos = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1};
+
 Node::Node(Node* parent, Board board, Move move, int depth)
         : mParent(parent), mBoard(std::move(board)), mMove(move), mDepth(depth)
 {
@@ -24,7 +26,6 @@ Node* Node::CreateTree(const Board& board, int depth, bool playerOne)
 {
     GameManager* gameManager = GameManager::GetInstance();
 
-    std::list<int> pos = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1};
     Node* root = new Node(nullptr, board, {}, 0);
 
     auto* nodesAtDepth = new std::vector<Node*>[depth + 1];
