@@ -60,7 +60,7 @@ int main(int argc, char** argv)
                     throw std::runtime_error("AI returned incorrect move");
                 }
             }
-        } while (!validMove && outcome != GameManager::Outcome::None);
+        } while (!validMove && outcome == GameManager::Outcome::None);
 
         // bail out early if we have an outcome
         if (outcome != GameManager::Outcome::None) {
