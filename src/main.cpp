@@ -7,7 +7,7 @@
 #include "UI.h"
 #include "GameManager.h"
 #include "PlayerFactory.h"
-#include "HumanPlayer.h"
+#include "Player/HumanPlayer.h"
 
 int main(int argc, char** argv)
 {

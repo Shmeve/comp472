@@ -1,22 +1,22 @@
 set(SOURCE_FILES
     # Source files here...
     main.cpp
-    AIPlayer.cpp
-    AIPlayer.h
+    Player/AIPlayer.cpp
+    Player/AIPlayer.h
     Board.cpp
     Board.h
     GameManager.cpp
     GameManager.h
-    HumanPlayer.cpp
-    HumanPlayer.h
+    Player/HumanPlayer.cpp
+    Player/HumanPlayer.h
     Move.h
-    NaivePlayer.cpp
-    NaivePlayer.h
+    Player/NaivePlayer.cpp
+    Player/NaivePlayer.h
     Node.cpp
     Node.h
-    RemainingTilesPlayer.cpp
-    RemainingTilesPlayer.h
-    Player.h
+    Player/RemainingTilesPlayer.cpp
+    Player/RemainingTilesPlayer.h
+    Player/Player.h
     UI.cpp
     UI.h
     PlayerFactory.h
