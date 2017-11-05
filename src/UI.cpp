@@ -311,6 +311,26 @@ void UI::message(const std::string& m, const bool& pause)
     }
 }
 
+void UI::outcome(const GameManager::Outcome& outcome)
+{
+    eraseWindow(mInputWindow);
+
+    if (outcome == GameManager::Outcome::None) {
+        return;
+    } else if (outcome == GameManager::Outcome::Draw) {
+        message("It's a draw!", true);
+    } else {
+        bool playerOne = outcome == GameManager::Outcome::Player1Win;
+        const int attr = getPlayerDisplayAttributes(playerOne);
+
+        wattron(mInputWindow, attr);
+        mvwaddstr(mInputWindow, INPUT_B, INPUT_B, getPlayerDisplayName(playerOne));
+        wattroff(mInputWindow, attr);
+        waddstr(mInputWindow, " wins!");
+        wgetch(mInputWindow);
+    }
+}
+
 void UI::log(const bool& playerOne, const Move& move, const int& value)
 {
     // add new log entry to front

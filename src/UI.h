@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Move.h"
+#include "GameManager.h"
 
 #include <curses.h>
 #include <utility>
@@ -56,6 +57,7 @@ public:
     unsigned int selectPlayer(const char** opts, const unsigned int& numOpts, const bool& playerOne);
     std::string getMove(const bool& playerOne);
     void message(const std::string& m, const bool& pause);
+    void outcome(const GameManager::Outcome& outcome);
 
     // log ops
     void log(const bool& playerOne, const Move& move, const int& value);
