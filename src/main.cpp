@@ -2,6 +2,7 @@
 #include <curses.h>
 #include <stdexcept>
 #include <string.h>
+#include <limits>
 
 #include "UI.h"
 #include "GameManager.h"
@@ -41,10 +42,11 @@ int main(int argc, char** argv)
         Player* player = players[currentPlayer];
         bool isPlayerOne = player->IsPlayerOne();
         Move move;
+        int value = std::numeric_limits<int>::min();
         bool validMove;
 
         do {
-            move = player->GetMove(gameBoard);
+            move = player->GetMove(gameBoard, &value);
             validMove = gameManager->IsValidMove(gameBoard, move, isPlayerOne);
 
             if (!validMove) {
@@ -68,7 +70,7 @@ int main(int argc, char** argv)
         }
 
         outcome = gameManager->PlayMove(gameBoard, move, 1 + isPlayerOne, false);
-        ui->log(isPlayerOne, move);
+        ui->log(isPlayerOne, move, value);
 
         // flip current player
         currentPlayer = 1 - currentPlayer;

@@ -11,5 +11,5 @@ public:
     Player() {};
     Player(const bool& playerOne) : mIsPlayerOne(playerOne) {};
     inline bool IsPlayerOne() { return mIsPlayerOne; }
-    virtual Move GetMove(Board board) = 0;
+    virtual Move GetMove(Board board, /*out*/ int* value) = 0;
 };

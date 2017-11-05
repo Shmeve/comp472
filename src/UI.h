@@ -29,7 +29,7 @@ private:
     WINDOW* mInputWindow = nullptr;
     WINDOW* mLogWindow = nullptr;
 
-    std::list<std::pair<const bool, const Move>> mLog;
+    std::list<std::tuple<const bool, const Move, const int>> mLog;
 
     unsigned int pickMenuOption(WINDOW* win, const int& y, const int& x, const char** opts, const unsigned int& numOpts);
     void drawMenu(WINDOW* win, const int& y, const int& x, const char** opts, const unsigned int& numOpts, const unsigned int& selected);
@@ -58,5 +58,5 @@ public:
     void message(const std::string& m, const bool& pause);
 
     // log ops
-    void log(const bool& playerOne, const Move& move);
+    void log(const bool& playerOne, const Move& move, const int& value);
 };

@@ -9,7 +9,7 @@
 #include <fstream>
 #include <list>
 
-Move AIPlayer::GetMove(Board board)
+Move AIPlayer::GetMove(Board board, /*out*/ int* value)
 {
     board.SetUI(false);
 
@@ -17,7 +17,7 @@ Move AIPlayer::GetMove(Board board)
     Node* root = Node::CreateTree(board, 3, mIsPlayerOne);
 
     // Call MiniMax
-    int value = MiniMax(root, 3, mIsPlayerOne);
+    *value = MiniMax(root, 3, mIsPlayerOne);
 
     // TODO: draw root
     std::ofstream file;
@@ -56,7 +56,7 @@ Move AIPlayer::GetMove(Board board)
     file.close();
 
     for (int i = 0; i < root->GetChildCount(); i++) {
-        if (root->GetChild(i)->GetValue() == value) {
+        if (root->GetChild(i)->GetValue() == *value) {
             return root->GetChild(i)->GetMove();
         }
     }
