@@ -3,6 +3,8 @@
 #include "Player.h"
 #include "Node.h"
 
+#define DEPTH 3
+
 class AIPlayer : public Player
 {
 protected:

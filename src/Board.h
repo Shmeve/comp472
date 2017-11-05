@@ -27,6 +27,6 @@ public:
     int GetCell(const idx_t& idx) const;
     void Clear(const idx_t& idx);
     void Move(const idx_t& from, const idx_t& to);
-    void SetCell(const idx_t& idx, const uint8_t& val);
+    void SetCell(const idx_t& idx, const cell_t& val);
     void SetUI(const bool& ui) { mUpdateUI = ui; };
 };

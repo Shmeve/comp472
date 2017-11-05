@@ -95,13 +95,6 @@ bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
         return false;
     }
 
-    //TODO: Not sure if set is slower
-    //if (mBoard.IsBlack(move.mStartPos))
-    //{
-    //    if (absDirection != mCol && absDirection != 1 && absDirection != mCol - 1 && absDirection != mCol + 1)
-    //        return false;
-    //}
-
     return true;
 }
 

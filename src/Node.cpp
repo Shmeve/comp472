@@ -28,14 +28,14 @@ Node* Node::CreateTree(const Board& board, int depth, bool playerOne)
 
     Node* root = new Node(nullptr, board, {}, 0);
 
-    auto* nodesAtDepth = new std::vector<Node*>[depth + 1];
+    auto* nodesAtDepth = new std::vector<Node*>[depth];
     nodesAtDepth[0].push_back(root);
 
     // Iterate through depth levels
-    for (int i = 0; i <= depth; i++) {
+    for (int i = 0; i < depth; i++) {
         // Iterate through nodes in depth i
         for (unsigned int j = 0; j < nodesAtDepth[i].size(); j++) {
-            if (i == depth) {
+            if (i == (depth - 1)) {
                 // If depth is lowest depth, NO CHILDREN
                 nodesAtDepth[i][j]->mChildren = nullptr;
             } else {
