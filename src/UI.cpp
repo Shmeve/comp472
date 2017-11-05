@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <limits>
 #include <utility>
+#include <tuple>
 
 #include "UI.h"
 #include "Board.h"
@@ -360,7 +361,7 @@ void UI::log(const bool& playerOne, const Move& move, const int& value)
 
         // print e(n) if applicable
         wmove(mLogWindow, getcury(mLogWindow), getcurx(mLogWindow) + 1);
-        if (tValue != std::numeric_limits<typeof(tValue)>::min()) {
+        if (tValue != std::numeric_limits<int>::min()) {
             wprintw(mLogWindow, "%i", tValue);
         } else {
             waddch(mLogWindow, '-');
