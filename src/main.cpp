@@ -2,11 +2,12 @@
 #include <curses.h>
 #include <stdexcept>
 #include <string.h>
+#include <limits>
 
 #include "UI.h"
 #include "GameManager.h"
 #include "PlayerFactory.h"
-#include "HumanPlayer.h"
+#include "Player/HumanPlayer.h"
 
 int main(int argc, char** argv)
 {
@@ -41,10 +42,11 @@ int main(int argc, char** argv)
         Player* player = players[currentPlayer];
         bool isPlayerOne = player->IsPlayerOne();
         Move move;
+        int value = std::numeric_limits<int>::min();
         bool validMove;
 
         do {
-            move = player->GetMove(gameBoard);
+            move = player->GetMove(gameBoard, &value);
             validMove = gameManager->IsValidMove(gameBoard, move, isPlayerOne);
 
             if (!validMove) {
@@ -68,30 +70,13 @@ int main(int argc, char** argv)
         }
 
         outcome = gameManager->PlayMove(gameBoard, move, 1 + isPlayerOne, false);
-        ui->log(isPlayerOne, move);
+        ui->log(isPlayerOne, move, value);
 
         // flip current player
         currentPlayer = 1 - currentPlayer;
     }
 
-    std::string message;
-
-    switch (outcome) {
-        case GameManager::Outcome::Player1Win:
-            message = "Green wins!";
-            break;
-        case GameManager::Outcome::Player2Win:
-            message = "Red wins!";
-            break;
-        case GameManager::Outcome::Draw:
-            message = "It's a draw!";
-            break;
-        default:
-            message = "This isn't good.";
-            break;
-    }
-
-    ui->message(message, true);
+    ui->outcome(outcome);
 
     return 0;
 }

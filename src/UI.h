@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Move.h"
+#include "GameManager.h"
 
 #include <curses.h>
 #include <utility>
@@ -29,7 +30,7 @@ private:
     WINDOW* mInputWindow = nullptr;
     WINDOW* mLogWindow = nullptr;
 
-    std::list<std::pair<const bool, const Move>> mLog;
+    std::list<std::tuple<const bool, const Move, const int>> mLog;
 
     unsigned int pickMenuOption(WINDOW* win, const int& y, const int& x, const char** opts, const unsigned int& numOpts);
     void drawMenu(WINDOW* win, const int& y, const int& x, const char** opts, const unsigned int& numOpts, const unsigned int& selected);
@@ -56,7 +57,8 @@ public:
     unsigned int selectPlayer(const char** opts, const unsigned int& numOpts, const bool& playerOne);
     std::string getMove(const bool& playerOne);
     void message(const std::string& m, const bool& pause);
+    void outcome(const GameManager::Outcome& outcome);
 
     // log ops
-    void log(const bool& playerOne, const Move& move);
+    void log(const bool& playerOne, const Move& move, const int& value);
 };

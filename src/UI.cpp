@@ -1,5 +1,8 @@
 #include <iostream>
 #include <cstdlib>
+#include <limits>
+#include <utility>
+#include <tuple>
 
 #include "UI.h"
 #include "Board.h"
@@ -21,7 +24,7 @@ const int INPUT_Y = BOARD_H;
 // Log window
 const int LOG_B = 1;
 const int LOG_H = BOARD_H + INPUT_H /*height*/;
-const int LOG_W = 9 /*width*/ + LOG_B * 2 /*border*/;
+const int LOG_W = 15 /*width*/ + LOG_B * 2 /*border*/;
 const int LOG_X = BOARD_W;
 const int LOG_Y = 0;
 
@@ -168,7 +171,11 @@ void UI::startGame()
     mLogWindow = createWindow(LOG_H, LOG_W, LOG_Y, LOG_X);
 
     mvwaddstr(mLogWindow, 0, 1, "Log");
-    wmove(mLogWindow, LOG_B, LOG_B);
+    mvwaddstr(mLogWindow, 0, 10, "e(n)");
+    mvwaddch(mLogWindow, 0, 9, ACS_TTEE);
+    mvwaddch(mLogWindow, getmaxy(mLogWindow) - 1, 9, ACS_BTEE);
+    wmove(mLogWindow, 1, 9);
+    wvline(mLogWindow, ACS_VLINE, LOG_H - LOG_B - 1);
     wrefresh(mLogWindow);
 }
 
@@ -305,10 +312,30 @@ void UI::message(const std::string& m, const bool& pause)
     }
 }
 
-void UI::log(const bool& playerOne, const Move& move)
+void UI::outcome(const GameManager::Outcome& outcome)
+{
+    eraseWindow(mInputWindow);
+
+    if (outcome == GameManager::Outcome::None) {
+        return;
+    } else if (outcome == GameManager::Outcome::Draw) {
+        message("It's a draw!", true);
+    } else {
+        bool playerOne = outcome == GameManager::Outcome::Player1Win;
+        const int attr = getPlayerDisplayAttributes(playerOne);
+
+        wattron(mInputWindow, attr);
+        mvwaddstr(mInputWindow, INPUT_B, INPUT_B, getPlayerDisplayName(playerOne));
+        wattroff(mInputWindow, attr);
+        waddstr(mInputWindow, " wins!");
+        wgetch(mInputWindow);
+    }
+}
+
+void UI::log(const bool& playerOne, const Move& move, const int& value)
 {
     // add new log entry to front
-    mLog.emplace_front(playerOne, move);
+    mLog.emplace_front(playerOne, move, value);
 
     // pop back to maintain size
     if (mLog.size() > LOG_H - 2 * LOG_B) {
@@ -319,12 +346,27 @@ void UI::log(const bool& playerOne, const Move& move)
     wmove(mLogWindow, LOG_B, LOG_B);
     wstandout(mLogWindow);
 
-    for (auto& it : mLog) {
-        waddch(mLogWindow, getPlayerDisplayName(it.first)[0] | getPlayerDisplayAttributes(it.first));
+    bool tPlayerOne;
+    Move tMove;
+    int tValue;
+
+    for (auto& t : mLog) {
+        std::tie(tPlayerOne, tMove, tValue) = std::move(t);
+
+        waddch(mLogWindow, getPlayerDisplayName(tPlayerOne)[0] | getPlayerDisplayAttributes(tPlayerOne));
         wprintw(mLogWindow, ": %c%c %c%c",
-                'A' + it.second.mStartPos / BOARD_COLS, '1' + it.second.mStartPos % BOARD_COLS,
-                'A' + it.second.mEndPos / BOARD_COLS, '1' + it.second.mEndPos % BOARD_COLS);
+                'A' + tMove.mStartPos / BOARD_COLS, '1' + tMove.mStartPos % BOARD_COLS,
+                'A' + tMove.mEndPos / BOARD_COLS, '1' + tMove.mEndPos % BOARD_COLS);
         wstandend(mLogWindow);
+
+        // print e(n) if applicable
+        wmove(mLogWindow, getcury(mLogWindow), getcurx(mLogWindow) + 1);
+        if (tValue != std::numeric_limits<int>::min()) {
+            wprintw(mLogWindow, "%-6i", tValue);
+        } else {
+            waddch(mLogWindow, '-');
+        }
+
         wmove(mLogWindow, getcury(mLogWindow) + 1, LOG_B);
     }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AIPlayer.h"
+#include "Player/AIPlayer.h"
 
 class RemainingTilesPlayer : public AIPlayer
 {

@@ -3,9 +3,9 @@
 #include <string.h>
 #include <stdexcept>
 
-#include "HumanPlayer.h"
-#include "NaivePlayer.h"
-#include "RemainingTilesPlayer.h"
+#include "Player/HumanPlayer.h"
+#include "Player/NaivePlayer.h"
+#include "Player/RemainingTilesPlayer.h"
 
 const char* typeHumanPlayer = "Human";
 const char* typeNaivePlayer = "Naive Heuristic (D2)";
