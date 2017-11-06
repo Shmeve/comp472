@@ -33,13 +33,13 @@ Board::Board(const Board& other)
     mUpdateUI = other.mUpdateUI;
 }
 
-Board::Board(Board&& other) noexcept
+Board::Board(Board&& other)
         : mCells(other.mCells), mUpdateUI(other.mUpdateUI)
 {
     other.mCells = nullptr;
 }
 
-Board::~Board() noexcept
+Board::~Board()
 {
     delete mCells;
 }
@@ -51,7 +51,7 @@ Board& Board::operator=(const Board& other)
     return *this;
 }
 
-Board& Board::operator=(Board&& other) noexcept
+Board& Board::operator=(Board&& other)
 {
     mCells = other.mCells;
     other.mCells = nullptr;

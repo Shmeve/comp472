@@ -18,10 +18,10 @@ public:
     Board() : Board(true) {};
     explicit Board(const bool& ui);
     Board(const Board& other);
-    Board(Board&& other) noexcept;
-    ~Board() noexcept;
+    Board(Board&& other);
+    ~Board();
     Board& operator=(const Board& other);
-    Board& operator=(Board&& other) noexcept;
+    Board& operator=(Board&& other);
 
     bool IsBlack(const idx_t& idx) const { return idx % 2 == 0; }
     int GetCell(const idx_t& idx) const;
