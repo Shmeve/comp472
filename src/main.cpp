@@ -63,8 +63,8 @@ int main(int argc, char** argv)
     ui->startGame();
 
     // Game Setup
-    Player* players[2] = {PlayerFactory::Create(opts[greenPlayerType], true, greenDepth ?: depth),
-                          PlayerFactory::Create(opts[redPlayerType], false, redDepth ?: depth)};
+    Player* players[2] = {PlayerFactory::Create(opts[greenPlayerType], true, greenDepth ? greenDepth : depth),
+                          PlayerFactory::Create(opts[redPlayerType], false, redDepth ? redDepth : depth)};
 
     GameManager* gameManager = GameManager::GetInstance();
     Board gameBoard = Board(true); // TODO: refactor this ui=true parameter
