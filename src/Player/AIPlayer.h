@@ -3,7 +3,7 @@
 #include "Player.h"
 #include "Node.h"
 
-#define DEPTH 3
+#define DEPTH 4
 
 class AIPlayer : public Player
 {
