@@ -1,6 +1,7 @@
 #include "GameManager.h"
 #include "Board.h"
 
+#include <cstdlib>
 #include <cmath>
 #include <set>
 
