@@ -8,5 +8,5 @@ public:
     RemainingTilesPlayer() : AIPlayer() {};
     explicit RemainingTilesPlayer(const bool& playerOne) : AIPlayer(playerOne) {};
 
-    virtual int EvaluateHeuristic(const Board& board);
+    int EvaluateHeuristic(const Board& board) override;
 };
