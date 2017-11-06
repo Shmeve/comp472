@@ -32,6 +32,7 @@ Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& c
 
     // initialize a best move, default = forfeit
     Move bestMove;
+    bool first = true;
 
     // check if we're at a terminal board
     if (currentDepth == maxDepth) {
@@ -63,10 +64,12 @@ Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& c
                     Minimax(tmp, bv, currentDepth + 1, maxDepth, !isPlayerOne, !isMaxLevel);
 
                     if ((isMaxLevel && bv > boardValue)
-                        || (!isMaxLevel && bv < boardValue)) {
+                        || (!isMaxLevel && bv < boardValue)
+                        || first) {
                         // this move is better than any we've seen so far from the lower levels, keep it
                         bestMove = move;
                         boardValue = bv;
+                        first = false;
                     }
                 }
             }
