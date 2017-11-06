@@ -1,4 +1,4 @@
-# COMP 472 - Deliverable 1
+# COMP 472 - Deliverable 2
 
 Team #4 - ProjectArmadillo
 
@@ -11,7 +11,7 @@ Anita Haurie, 27498063
 
 Section: Fall 2017 - F
 
-Date: October 22, 2017
+Date: November 6, 2017
 
 ## Usage
 
