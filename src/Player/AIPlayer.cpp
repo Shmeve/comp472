@@ -14,10 +14,10 @@ Move AIPlayer::GetMove(Board board, /*out*/ int* value)
     board.SetUI(false);
 
     // Create tree
-    Node* root = Node::CreateTree(board, DEPTH, mIsPlayerOne);
+    Node* root = Node::CreateTree(board, mDepth, mIsPlayerOne);
 
     // Call MiniMax
-    *value = MiniMax(root, DEPTH, mIsPlayerOne);
+    *value = MiniMax(root, mDepth, mIsPlayerOne);
 
     for (int i = 0; i < root->GetChildCount(); i++) {
         if (root->GetChild(i)->GetValue() == *value) {
