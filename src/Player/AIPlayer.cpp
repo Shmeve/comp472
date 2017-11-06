@@ -16,7 +16,7 @@ Move AIPlayer::GetMove(Board board, /*out*/ int* value)
 
     // perform minimax
     int boardValue = mIsPlayerOne ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
-    Move move = Minimax(board, boardValue, 1, DEPTH, mIsPlayerOne, mIsPlayerOne);
+    Move move = Minimax(board, boardValue, 1, DEPTH, mIsPlayerOne, mIsPlayerOne, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
 
     // display e(n) if the move isn't a forfeit
     if (move != Move(0, 0)) {
@@ -26,13 +26,12 @@ Move AIPlayer::GetMove(Board board, /*out*/ int* value)
     return move;
 }
 
-Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& currentDepth, const int& maxDepth, const bool& isPlayerOne, const bool& isMaxLevel)
+Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& currentDepth, const int& maxDepth, const bool& isPlayerOne, const bool& isMaxLevel, int alpha, int beta)
 {
     auto gameManager = GameManager::GetInstance();
 
     // initialize a best move, default = forfeit
     Move bestMove;
-    bool first = true;
 
     // check if we're at a terminal board
     if (currentDepth == maxDepth) {
@@ -41,6 +40,10 @@ Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& c
         // don't care about retval
         return bestMove;
     }
+
+    // we use this bool to force a move to be returned instead of forfeiting if all
+    // possible moves lead to death
+    bool first = true;
 
     for (idx_t k = 0; k < BOARD_SIZE; ++k) {
         // for all current player's tokens...
@@ -61,7 +64,7 @@ Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& c
                     // we get the bubbled-up "best" value possible from this configuration
                     // and keep the move if's better for this level (depending on min/max)
                     int bv = !isMaxLevel ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
-                    Minimax(tmp, bv, currentDepth + 1, maxDepth, !isPlayerOne, !isMaxLevel);
+                    Minimax(tmp, bv, currentDepth + 1, maxDepth, !isPlayerOne, !isMaxLevel, alpha, beta);
 
                     if ((isMaxLevel && bv > boardValue)
                         || (!isMaxLevel && bv < boardValue)
@@ -70,6 +73,18 @@ Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& c
                         bestMove = move;
                         boardValue = bv;
                         first = false;
+
+                        // update alpha and beta values depending on which level we are (min/max)
+                        if (isMaxLevel && boardValue > alpha) {
+                            alpha = boardValue;
+                        } else if (!isMaxLevel && boardValue < beta) {
+                            beta = boardValue;
+                        }
+
+                        // prune the rest of this subtree if alpha and beta conflict
+                        if (beta <= alpha) {
+                            return bestMove;
+                        }
                     }
                 }
             }
