@@ -16,7 +16,7 @@ Move AIPlayer::GetMove(Board board, /*out*/ int* value)
 
     // perform minimax
     int boardValue = mIsPlayerOne ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
-    Move move = Minimax(board, boardValue, 1, 6, mIsPlayerOne, mIsPlayerOne);
+    Move move = Minimax(board, boardValue, 1, DEPTH, mIsPlayerOne, mIsPlayerOne);
 
     // display e(n) if the move isn't a forfeit
     if (move != Move(0, 0)) {
