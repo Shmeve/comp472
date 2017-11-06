@@ -5,6 +5,8 @@ set(SOURCE_FILES
     Player/AIPlayer.h
     Board.cpp
     Board.h
+    Player/CellMovesPlayer.cpp
+    Player/CellMovesPlayer.h
     GameManager.cpp
     GameManager.h
     Player/HumanPlayer.cpp
