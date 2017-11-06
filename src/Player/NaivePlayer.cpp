@@ -1,8 +1,6 @@
 #include "NaivePlayer.h"
 #include "Board.h"
 
-#include <stdexcept>
-
 int NaivePlayer::EvaluateHeuristic(const Board& board)
 {
     int result = 0;
