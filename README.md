@@ -13,6 +13,22 @@ Section: Fall 2017 - F
 
 Date: October 22, 2017
 
+## Usage
+
+```
+Team 11 - Bonzee
+Usage:
+  Armadillo [OPTION...]
+
+  -h, --help            Help
+  -w, --wait            Wait for debugger to attach
+  -g, --green arg       Green player type
+  -r, --red arg         Red player type
+  -d, --depth arg       Tree search depth for both players (shortcut)
+  -G, --greendepth arg  Tree search depth for Red player
+  -R, --reddepth arg    Tree search depth for Green player
+```
+
 ## Compilation instructions
 
 **This project uses the C++11 standard, and you will need a recent compiler capable of supporting these features.**
