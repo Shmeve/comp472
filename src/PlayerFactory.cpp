@@ -22,14 +22,14 @@ const char** PlayerFactory::Options(/*out*/ unsigned int& len)
     return opts;
 }
 
-Player* PlayerFactory::Create(const char* type, const bool& playerOne, const int& depth)
+Player* PlayerFactory::Create(const char* type, const bool& playerOne)
 {
     if (strcmp(type, typeHumanPlayer) == 0) {
         return new HumanPlayer(playerOne);
     } else if (strcmp(type, typeNaivePlayer) == 0) {
-        return new NaivePlayer(playerOne, depth);
+        return new NaivePlayer(playerOne);
     } else if (strcmp(type, typeRemainingTilesPlayer) == 0) {
-        return new RemainingTilesPlayer(playerOne, depth);
+        return new RemainingTilesPlayer(playerOne);
     }
 
     throw std::runtime_error("Invalid player type in PlayerFactory::Create");

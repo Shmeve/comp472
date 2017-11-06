@@ -5,7 +5,8 @@
 class NaivePlayer : public AIPlayer
 {
 public:
-    NaivePlayer(const bool& playerOne, const int& depth) : AIPlayer(playerOne, depth) {};
+    NaivePlayer() : AIPlayer() {};
+    explicit NaivePlayer(const bool& playerOne) : AIPlayer(playerOne) {};
 
     virtual int EvaluateHeuristic(const Board& board);
 };
