@@ -364,7 +364,7 @@ void UI::log(const bool& playerOne, const Move& move, const int& value)
         if (tValue != std::numeric_limits<int>::min()) {
             wprintw(mLogWindow, "%-6i", tValue);
         } else {
-            waddch(mLogWindow, '-');
+            wprintw(mLogWindow, "%6c", ' ');
         }
 
         wmove(mLogWindow, getcury(mLogWindow) + 1, LOG_B);
