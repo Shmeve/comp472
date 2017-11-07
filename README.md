@@ -4,10 +4,10 @@ Team #4 - ProjectArmadillo
 
 Authors:
 
-Thomas Vaudry-Read, 27516517  
 Christopher Paslawski, 27445164  
-Steve Ferreira, 27477546  
 Anita Haurie, 27498063  
+Thomas Vaudry-Read, 27516517  
+Steve Ferreira, 27477546  
 
 Section: Fall 2017 - F
 
