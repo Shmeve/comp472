@@ -4,36 +4,22 @@ Team #4 - ProjectArmadillo
 
 Authors:
 
-Thomas Vaudry-Read, 27516517  
 Christopher Paslawski, 27445164  
-Steve Ferreira, 27477546  
 Anita Haurie, 27498063  
+Thomas Vaudry-Read, 27516517  
+Steve Ferreira, 27477546  
 
 Section: Fall 2017 - F
 
 Date: November 6, 2017
 
-## Usage
-
-```
-Team 11 - Bonzee
-Usage:
-  Armadillo [OPTION...]
-
-  -h, --help            Help
-  -w, --wait            Wait for debugger to attach
-  -g, --green arg       Green player type
-  -r, --red arg         Red player type
-  -d, --depth arg       Tree search depth for both players (shortcut)
-  -G, --greendepth arg  Tree search depth for Red player
-  -R, --reddepth arg    Tree search depth for Green player
-```
+We certify that this submission is the original work of members of the group and meets the Faculty's Expectations of Originality.
 
 ## Compilation instructions
 
 **This project uses the C++11 standard, and you will need a recent compiler capable of supporting these features.**
 
-This project uses CMake >=3.6 (https://cmake.org/) to generate build files for any platform. It can be installed on Linux or macOS using a package manager, or Windows using the official installer. Ensure it is added to your system PATH and accessible via command line.
+This project uses CMake >=3.5 (https://cmake.org/) to generate build files for any platform. It can be installed on Linux or macOS using a package manager, or Windows using the official installer. Ensure it is added to your system PATH and accessible via command line.
 
 Then, CMake can be used in the command line to generate build files for any environment desired.
 
