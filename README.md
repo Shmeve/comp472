@@ -13,11 +13,13 @@ Section: Fall 2017 - F
 
 Date: November 6, 2017
 
+We certify that this submission is the original work of members of the group and meets the Faculty's Expectations of Originality.
+
 ## Compilation instructions
 
 **This project uses the C++11 standard, and you will need a recent compiler capable of supporting these features.**
 
-This project uses CMake >=3.6 (https://cmake.org/) to generate build files for any platform. It can be installed on Linux or macOS using a package manager, or Windows using the official installer. Ensure it is added to your system PATH and accessible via command line.
+This project uses CMake >=3.5 (https://cmake.org/) to generate build files for any platform. It can be installed on Linux or macOS using a package manager, or Windows using the official installer. Ensure it is added to your system PATH and accessible via command line.
 
 Then, CMake can be used in the command line to generate build files for any environment desired.
 
