@@ -7,6 +7,8 @@ set(SOURCE_FILES
     Board.h
     Player/CellMovesPlayer.cpp
     Player/CellMovesPlayer.h
+    Player/CornerCellPlayer.cpp
+    Player/CornerCellPlayer.h
     GameManager.cpp
     GameManager.h
     Player/HumanPlayer.cpp
