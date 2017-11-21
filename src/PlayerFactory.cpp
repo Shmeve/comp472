@@ -8,12 +8,14 @@
 #include "Player/RemainingTilesPlayer.h"
 #include "Player/CellMovesPlayer.h"
 #include "Player/CornerCellPlayer.h"
+#include "Player/RandomPlayer.h"
 
 const char* typeHumanPlayer = "Human";
 const char* typeNaivePlayer = "Naive Heuristic (D2)";
 const char* typeRemainingTilesPlayer = "Remaining Tiles Player";
 const char* typeCellMovesPlayer = "Cell Moves Player";
 const char* typeCornerCellPlayer = "Corner Cell Player";
+const char* typeRandomPlayer = "Random Player";
 
 const char** PlayerFactory::Options(/*out*/ unsigned int& len)
 {
@@ -21,7 +23,8 @@ const char** PlayerFactory::Options(/*out*/ unsigned int& len)
                                  typeNaivePlayer,
                                  typeRemainingTilesPlayer,
                                  typeCellMovesPlayer,
-                                 typeCornerCellPlayer};
+                                 typeCornerCellPlayer,
+                                 typeRandomPlayer};
 
     len = sizeof(opts) / sizeof(char*);
 
@@ -40,6 +43,8 @@ Player* PlayerFactory::Create(const char* type, const bool& playerOne, const int
         return new CellMovesPlayer(playerOne, depth);
     } else if (strcmp(type, typeCornerCellPlayer) == 0) {
         return new CornerCellPlayer(playerOne, depth);
+    } else if (strcmp(type, typeRandomPlayer) == 0) {
+        return new RandomPlayer(playerOne, depth);
     }
 
     throw std::runtime_error("Invalid player type in PlayerFactory::Create");

@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <string.h>
 #include <limits>
+#include <time.h>
 #include <cxxopts/cxxopts.hpp>
 
 #include "UI.h"
@@ -43,6 +44,8 @@ int main(int argc, char** argv)
         std::cout << options.help();
         return 0;
     }
+
+    srand((unsigned int)time(nullptr));
 
     UI* ui = UI::getInstance();
     ui->init();
