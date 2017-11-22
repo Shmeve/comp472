@@ -3,17 +3,45 @@
 #include <stdexcept>
 #include <string.h>
 #include <limits>
+#include <cxxopts/cxxopts.hpp>
 
 #include "UI.h"
 #include "GameManager.h"
 #include "PlayerFactory.h"
 #include "Player/HumanPlayer.h"
 
+#define DEFAULT_DEPTH 3
+
 int main(int argc, char** argv)
 {
+    cxxopts::Options options("Armadillo", "Team 11 - Bonzee");
+
+    int greenPlayerType = -1;
+    int redPlayerType = -1;
+    int depth = DEFAULT_DEPTH;
+    int greenDepth = 0;
+    int redDepth = 0;
+
+    options.add_options()
+            ("h,help", "Help")
+            ("w,wait", "Wait for debugger to attach")
+            ("g,green", "Green player type", cxxopts::value(greenPlayerType))
+            ("r,red", "Red player type", cxxopts::value(redPlayerType))
+            ("d,depth", "Tree search depth for both players (shortcut)", cxxopts::value(depth))
+            ("G,greendepth", "Tree search depth for Red player", cxxopts::value(greenDepth))
+            ("R,reddepth", "Tree search depth for Green player", cxxopts::value(redDepth))
+            ;
+
+    options.parse(argc, argv);
+
     // wait to attach debugger
-    if (argc > 1 && strncmp(argv[1], "--wait", 6) == 0) {
+    if (options["wait"].as<bool>()) {
         getchar();
+    }
+
+    if (options["help"].as<bool>()) {
+        std::cout << options.help();
+        return 0;
     }
 
     UI* ui = UI::getInstance();
@@ -24,14 +52,19 @@ int main(int argc, char** argv)
     unsigned int numOpts;
     auto opts = PlayerFactory::Options(numOpts);
 
-    auto greenPlayerType = ui->selectPlayer(opts, numOpts, true);
-    auto redPlayerType = ui->selectPlayer(opts, numOpts, false);
+    if (greenPlayerType < 0) {
+        greenPlayerType = ui->selectPlayer(opts, numOpts, true);
+    }
+
+    if (redPlayerType < 0) {
+        redPlayerType = ui->selectPlayer(opts, numOpts, false);
+    }
 
     ui->startGame();
 
     // Game Setup
-    Player* players[2] = {PlayerFactory::Create(opts[greenPlayerType], true),
-                          PlayerFactory::Create(opts[redPlayerType], false)};
+    Player* players[2] = {PlayerFactory::Create(opts[greenPlayerType], true, greenDepth ?: depth),
+                          PlayerFactory::Create(opts[redPlayerType], false, redDepth ?: depth)};
 
     GameManager* gameManager = GameManager::GetInstance();
     Board gameBoard = Board(true); // TODO: refactor this ui=true parameter

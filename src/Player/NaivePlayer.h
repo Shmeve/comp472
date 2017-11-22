@@ -5,8 +5,7 @@
 class NaivePlayer : public AIPlayer
 {
 public:
-    NaivePlayer() : AIPlayer() {};
-    explicit NaivePlayer(const bool& playerOne) : AIPlayer(playerOne) {};
+    NaivePlayer(const bool& playerOne, const int& depth) : AIPlayer(playerOne, depth) {};
 
     int EvaluateHeuristic(const Board& board) override;
 };

@@ -5,8 +5,7 @@
 class RemainingTilesPlayer : public AIPlayer
 {
 public:
-    RemainingTilesPlayer() : AIPlayer() {};
-    explicit RemainingTilesPlayer(const bool& playerOne) : AIPlayer(playerOne) {};
+    RemainingTilesPlayer(const bool& playerOne, const int& depth) : AIPlayer(playerOne, depth) {};
 
     int EvaluateHeuristic(const Board& board) override;
 };
