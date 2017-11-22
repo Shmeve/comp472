@@ -10,7 +10,7 @@
 #include "PlayerFactory.h"
 #include "Player/HumanPlayer.h"
 
-#define DEFAULT_DEPTH 3
+#define DEFAULT_DEPTH 4
 
 int main(int argc, char** argv)
 {
