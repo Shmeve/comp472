@@ -223,9 +223,9 @@ void UI::setCell(const int& y, const int& x, const int& val)
      * Print the piece, row by row
      */
 
-    const chtype piece[] = {ACS_ULCORNER, ACS_HLINE, ACS_URCORNER,
-                            ACS_VLINE,    ACS_BLOCK, ACS_VLINE,
-                            ACS_LLCORNER, ACS_HLINE, ACS_LRCORNER};
+    const chtype piece[] = {ACS_ULCORNER, ACS_HLINE,       ACS_URCORNER,
+                            ACS_VLINE,    ' ' | A_REVERSE, ACS_VLINE,
+                            ACS_LLCORNER, ACS_HLINE,       ACS_LRCORNER};
 
     int dy = y * 3 + BOARD_B;
     int dx = x * 3 + BOARD_B;

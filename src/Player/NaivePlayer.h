@@ -8,5 +8,5 @@ public:
     NaivePlayer() : AIPlayer() {};
     explicit NaivePlayer(const bool& playerOne) : AIPlayer(playerOne) {};
 
-    virtual int EvaluateHeuristic(const Board& board);
+    int EvaluateHeuristic(const Board& board) override;
 };

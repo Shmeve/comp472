@@ -50,7 +50,7 @@ GameManager::Outcome GameManager::EvaluateWinningCondition()
     return outcome;
 }
 
-bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
+bool GameManager::IsValidMove(const Board& board, const Move& move, const bool& playerOne) const
 {
     // Check if start and end are on board
     if (move.mStartPos >= BOARD_SIZE || move.mEndPos >= BOARD_SIZE) {

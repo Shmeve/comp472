@@ -24,7 +24,14 @@ public:
     Board& operator=(Board&& other);
 
     bool IsBlack(const idx_t& idx) const { return idx % 2 == 0; }
-    int GetCell(const idx_t& idx) const;
+    inline int GetCell(const idx_t& idx) const
+    {
+        if (idx >= BOARD_SIZE) {
+            return 0;
+        }
+
+        return mCells[idx];
+    }
     void Clear(const idx_t& idx);
     void Move(const idx_t& from, const idx_t& to);
     void SetCell(const idx_t& idx, const cell_t& val);

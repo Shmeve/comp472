@@ -59,15 +59,6 @@ Board& Board::operator=(Board&& other)
     return *this;
 }
 
-int Board::GetCell(const idx_t& idx) const
-{
-    if (idx >= BOARD_SIZE) {
-        return 0;
-    }
-
-    return mCells[idx];
-}
-
 void Board::Clear(const idx_t& idx)
 {
     SetCell(idx, 0);
