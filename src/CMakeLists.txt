@@ -3,6 +3,8 @@ set(SOURCE_FILES
     main.cpp
     Player/AIPlayer.cpp
     Player/AIPlayer.h
+    Player/BestPathPlayer.cpp
+    Player/BestPathPlayer.h
     Board.cpp
     Board.h
     Player/CellMovesPlayer.cpp
