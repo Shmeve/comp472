@@ -25,7 +25,7 @@ public:
     static GameManager* GetInstance();
 
     Outcome EvaluateWinningCondition();
-    bool IsValidMove(Board& board, const Move& move, bool playerOne);
+    bool IsValidMove(const Board& board, const Move& move, const bool& playerOne) const;
     Outcome PlayMove(Board& board, const Move& move, int opponent, bool ai);
     void Attack(Board& board, const Move& move, int opponent, bool ai);
     int Eliminate(Board& board, int currentPos, int direction, int opponent, bool ai);

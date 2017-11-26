@@ -223,9 +223,9 @@ void UI::setCell(const int& y, const int& x, const int& val)
      * Print the piece, row by row
      */
 
-    const chtype piece[] = {ACS_ULCORNER, ACS_HLINE, ACS_URCORNER,
-                            ACS_VLINE,    ACS_BLOCK, ACS_VLINE,
-                            ACS_LLCORNER, ACS_HLINE, ACS_LRCORNER};
+    const chtype piece[] = {ACS_ULCORNER, ACS_HLINE,       ACS_URCORNER,
+                            ACS_VLINE,    ' ' | A_REVERSE, ACS_VLINE,
+                            ACS_LLCORNER, ACS_HLINE,       ACS_LRCORNER};
 
     int dy = y * 3 + BOARD_B;
     int dx = x * 3 + BOARD_B;
@@ -364,7 +364,7 @@ void UI::log(const bool& playerOne, const Move& move, const int& value)
         if (tValue != std::numeric_limits<int>::min()) {
             wprintw(mLogWindow, "%-6i", tValue);
         } else {
-            waddch(mLogWindow, '-');
+            wprintw(mLogWindow, "%6c", ' ');
         }
 
         wmove(mLogWindow, getcury(mLogWindow) + 1, LOG_B);

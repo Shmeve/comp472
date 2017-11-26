@@ -18,8 +18,6 @@ set(SOURCE_FILES
     Move.h
     Player/NaivePlayer.cpp
     Player/NaivePlayer.h
-    Node.cpp
-    Node.h
     Player/RandomPlayer.cpp
     Player/RandomPlayer.h
     Player/RemainingTilesPlayer.cpp
