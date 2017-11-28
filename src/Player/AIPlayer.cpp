@@ -112,7 +112,7 @@ Move AIPlayer::MonteCarlo(const Board &board, const bool& isPlayerOne)
     time_t start = clock();
 
     // Root State
-    MCTSState root = MCTSState(board);
+    MCTSState root = MCTSState(board, isPlayerOne, Move(0,0));
 
 
     while (((clock()-start)/CLOCKS_PER_SEC < TIME_LIMIT) && !terminate) {
@@ -120,6 +120,7 @@ Move AIPlayer::MonteCarlo(const Board &board, const bool& isPlayerOne)
         MCTSState selection = root;
 
         while (selection.getChildren()[0] != nullptr) {
+            selection.visit();
             MCTSState** children = selection.getChildren();
             double_t bestChildValue = 0;
             int bestChildIndex = -1;
@@ -145,13 +146,52 @@ Move AIPlayer::MonteCarlo(const Board &board, const bool& isPlayerOne)
             }
         }
 
+        bestMove = selection.getMoveToCurrentState();
+
         // Expansion
+        if (selection.getAvailableMoves().size() >= MAX_CHILDREN) {
+            for (int i = 0; i < MAX_CHILDREN; i++) {
+                Board tmp = selection.getBoard();
+                Move move = selection.getRandomMove();
+                gameManager->PlayMove(tmp, move, 1+selection.isPlayerOne(), true);
+                selection.addChild(new MCTSState(tmp, !selection.isPlayerOne(), move));
+
+            }
+        } else {
+            for (int i = 0;  i < selection.getAvailableMoves().size(); i++) {
+                Board tmp = selection.getBoard();
+                Move move = selection.getAvailableMoves().at(i);
+                gameManager->PlayMove(tmp, move, 1+selection.isPlayerOne(), true);
+                selection.addChild(new MCTSState(tmp, !selection.isPlayerOne(), move));
+            }
+        }
 
         // Simulation
+        for (int i = 0; i < selection.getChildrenCount(); i++) {
+            MCTSState node = *selection.getChildren()[i];
+
+            simulate(node);
+        }
 
         // Backpropagation
     }
 
     return bestMove;
+}
+
+int AIPlayer::simulate(MCTSState node)
+{
+    auto gameManager = GameManager::GetInstance();
+
+    Move move = node.getRandomMove();
+    Board tmp = node.getBoard();
+    int result = gameManager->PlayMove(tmp, move, 1+node.isPlayerOne(), true);
+
+    if (result == GameManager::Outcome::None) {
+        node.addChild(new MCTSState(tmp, !node.isPlayerOne(), move));
+    } else {
+        return result;
+    }
+
 }
 
