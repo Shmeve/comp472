@@ -10,6 +10,9 @@
 #include "Player/CornerCellPlayer.h"
 #include "Player/RandomPlayer.h"
 #include "Player/BestPathPlayer.h"
+#include "Player/OthelloPlayer.h"
+#include "Player/DistanceTravelledPlayer.h"
+#include "Player/NeighborPlayer.h"
 
 const char* typeHumanPlayer = "Human";
 const char* typeNaivePlayer = "Naive Heuristic (D2)";
@@ -18,6 +21,9 @@ const char* typeCellMovesPlayer = "Cell Moves Player";
 const char* typeCornerCellPlayer = "Corner Cell Player";
 const char* typeRandomPlayer = "Random Player";
 const char* typeBestPathPlayer = "Best Path Player";
+const char* typeOthelloPlayer = "Othello Player";
+const char* typeDistanceTravelledPlayer = "Distance Travelled Player";
+const char* typeNeighborPlayer = "Neighbor Player";
 
 const char** PlayerFactory::Options(/*out*/ unsigned int& len)
 {
@@ -27,7 +33,10 @@ const char** PlayerFactory::Options(/*out*/ unsigned int& len)
                                  typeCellMovesPlayer,
                                  typeCornerCellPlayer,
                                  typeRandomPlayer,
-                                 typeBestPathPlayer};
+                                 typeBestPathPlayer,
+                                 typeOthelloPlayer,
+                                 typeDistanceTravelledPlayer,
+                                 typeNeighborPlayer};
 
     len = sizeof(opts) / sizeof(char*);
 
@@ -50,6 +59,12 @@ Player* PlayerFactory::Create(const char* type, const bool& playerOne, const int
         return new RandomPlayer(playerOne, depth);
     } else if (strcmp(type, typeBestPathPlayer) == 0) {
         return new BestPathPlayer(playerOne, depth);
+    } else if (strcmp(type, typeOthelloPlayer) == 0) {
+        return new OthelloPlayer(playerOne, depth);
+    } else if (strcmp(type, typeDistanceTravelledPlayer) == 0) {
+        return new DistanceTravelledPlayer(playerOne, depth);
+    } else if (strcmp(type, typeNeighborPlayer) == 0) {
+        return new NeighborPlayer(playerOne, depth);
     }
 
     throw std::runtime_error("Invalid player type in PlayerFactory::Create");
