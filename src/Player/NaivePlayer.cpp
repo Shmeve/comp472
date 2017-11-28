@@ -1,7 +1,7 @@
 #include "NaivePlayer.h"
 #include "Board.h"
 
-int NaivePlayer::EvaluateHeuristic(const Board& board)
+int NaivePlayer::EvaluateHeuristic(const Board& board, const int& count, const bool& draw, const int& depth)
 {
     int result = 0;
 

@@ -1,7 +1,7 @@
 #include "RemainingTilesPlayer.h"
 #include "Board.h"
 
-int RemainingTilesPlayer::EvaluateHeuristic(const Board& board)
+int RemainingTilesPlayer::EvaluateHeuristic(const Board& board, const int& count, const bool& draw, const int& depth)
 {
     int value = 0;
     for (idx_t i = 0; i < BOARD_ROWS * BOARD_COLS; i++) {

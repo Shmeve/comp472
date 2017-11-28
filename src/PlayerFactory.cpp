@@ -13,6 +13,7 @@
 #include "Player/OthelloPlayer.h"
 #include "Player/DistanceTravelledPlayer.h"
 #include "Player/NeighborPlayer.h"
+#include "Player\BetterCornerCellPlayer.h"
 
 const char* typeHumanPlayer = "Human";
 const char* typeNaivePlayer = "Naive Heuristic (D2)";
@@ -24,6 +25,7 @@ const char* typeBestPathPlayer = "Best Path Player";
 const char* typeOthelloPlayer = "Othello Player";
 const char* typeDistanceTravelledPlayer = "Distance Travelled Player";
 const char* typeNeighborPlayer = "Neighbor Player";
+const char* typeBetterCornerCellPlayer = "Better Corner Cell Player";
 
 const char** PlayerFactory::Options(/*out*/ unsigned int& len)
 {
@@ -36,7 +38,8 @@ const char** PlayerFactory::Options(/*out*/ unsigned int& len)
                                  typeBestPathPlayer,
                                  typeOthelloPlayer,
                                  typeDistanceTravelledPlayer,
-                                 typeNeighborPlayer};
+                                 typeNeighborPlayer,
+                                 typeBetterCornerCellPlayer};
 
     len = sizeof(opts) / sizeof(char*);
 
@@ -65,6 +68,8 @@ Player* PlayerFactory::Create(const char* type, const bool& playerOne, const int
         return new DistanceTravelledPlayer(playerOne, depth);
     } else if (strcmp(type, typeNeighborPlayer) == 0) {
         return new NeighborPlayer(playerOne, depth);
+    } else if (strcmp(type, typeBetterCornerCellPlayer) == 0) {
+        return new BetterCornerCellPlayer(playerOne, depth);
     }
 
     throw std::runtime_error("Invalid player type in PlayerFactory::Create");

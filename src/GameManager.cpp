@@ -15,7 +15,7 @@ std::set<int> whiteMoves = {1, BOARD_COLS};                                 /*1,
 
 GameManager* GameManager::mInstance(nullptr);
 
-GameManager::GameManager() : mConsecutiveNoAttack(0)
+GameManager::GameManager() : mConsecutiveNoAttack(0), mAIConsecutiveNoAttack(0), mDrawOccurred(false)
 {
     mTokens[0] = 22;
     mTokens[1] = 22;
@@ -46,6 +46,33 @@ GameManager::Outcome GameManager::EvaluateWinningCondition()
         //No more white tokens
         outcome = Player1Win;
     }
+
+    return outcome;
+}
+
+GameManager::Outcome GameManager::EvaluateAIWinningCondition(const Board& board)
+{
+    Outcome outcome = None;
+
+    int green = 0, red = 0;
+    for (idx_t i = 0; i < BOARD_SIZE; ++i) {
+        switch (board.GetCell(i)) {
+            case 1:
+                green++;
+                break;
+            case 2:
+                red++;
+                break;
+        }
+    }
+
+    if (red == 1)
+        red = 1;
+
+    if (green == 0)
+        outcome = Outcome::Player2Win;
+    else if (red == 0)
+        outcome = Outcome::Player1Win;
 
     return outcome;
 }
@@ -107,9 +134,15 @@ GameManager::Outcome GameManager::PlayMove(Board& board, const Move& move, int o
 
     board.Move(move.mStartPos, move.mEndPos);
 
-    outcome = EvaluateWinningCondition();
+    if (!ai) {
+        outcome = EvaluateWinningCondition();
+    } else {
+        outcome = EvaluateAIWinningCondition(board);
+    }
 
-    if (outcome == None && mConsecutiveNoAttack >= 10) {
+    if (outcome == None && mConsecutiveNoAttack >= 10 && !ai) {
+        outcome = Draw;
+    } else if (outcome == None && mAIConsecutiveNoAttack >= 10 && ai) {
         outcome = Draw;
     }
 
@@ -127,6 +160,8 @@ void GameManager::Attack(Board& board, const Move& move, int opponent, bool ai)
         if (!ai && eliminated > 0) {
             mConsecutiveNoAttack = 0;
         }
+        mAIConsecutiveNoAttack = 0;
+        mDrawOccurred = false;
     }
 
     // Backward attack check and no forward attack
@@ -135,12 +170,19 @@ void GameManager::Attack(Board& board, const Move& move, int opponent, bool ai)
         if (!ai && eliminated > 0) {
             mConsecutiveNoAttack = 0;
         }
+        mAIConsecutiveNoAttack = 0;
+        mDrawOccurred = false;
     }
 
     // Defensive move
     if (eliminated == 0) {
         if (!ai) {
             mConsecutiveNoAttack++;
+        }
+
+        mAIConsecutiveNoAttack++;
+        if (mAIConsecutiveNoAttack >= 10) {
+            mDrawOccurred = true;
         }
     }
 }

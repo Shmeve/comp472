@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-int BestPathPlayer::EvaluateHeuristic(const Board& board)
+int BestPathPlayer::EvaluateHeuristic(const Board& board, const int& count, const bool& draw, const int& depth)
 {
     int lateralGreen = 0;
     int lateralRed = 0;

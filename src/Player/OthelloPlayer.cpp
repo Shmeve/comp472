@@ -7,7 +7,7 @@ int8_t weight[45] = { +4, -3, +2, +2, +2, +2, +2, -3, +4,
                       -3, -4, -1,  0, -1,  0, -1, -4, -3,
                       +4, -3, +2, +2, +2, +2, +2, -3, +4 };
 
-int OthelloPlayer::EvaluateHeuristic(const Board& board)
+int OthelloPlayer::EvaluateHeuristic(const Board& board, const int& count, const bool& draw, const int& depth)
 {
     int result = 0;
     int factor = 0;

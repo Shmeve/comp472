@@ -5,6 +5,8 @@ set(SOURCE_FILES
     Player/AIPlayer.h
     Player/BestPathPlayer.cpp
     Player/BestPathPlayer.h
+    Player/BetterCornerCellPlayer.cpp
+    Player/BetterCornerCellPlayer.h
     Board.cpp
     Board.h
     Player/CellMovesPlayer.cpp

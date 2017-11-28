@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-int CellMovesPlayer::EvaluateHeuristic(const Board& board)
+int CellMovesPlayer::EvaluateHeuristic(const Board& board, const int& count, const bool& draw, const int& depth)
 {
     int result = 0;
 

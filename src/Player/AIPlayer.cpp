@@ -36,7 +36,7 @@ Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& c
     // check if we're at a terminal board
     if (currentDepth == maxDepth) {
         // if yes, we evaluate its e(n) and bubble it up
-        boardValue = EvaluateHeuristic(board);
+        boardValue = EvaluateHeuristic(board, gameManager->GetAICount(), gameManager->GetDrawOccurred(), currentDepth);
         // don't care about retval
         return bestMove;
     }
@@ -56,15 +56,15 @@ Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& c
                 if (gameManager->IsValidMove(board, move, isPlayerOne)) {
                     // if it is, simulate it with a copy of the board
                     Board tmp = board;
-                    gameManager->PlayMove(tmp, move, 1 + isPlayerOne, true);
 
-                    // TODO: store outcome from PlayMove and don't recurse if not necessary
+                    GameManager::Outcome outcome = gameManager->PlayMove(tmp, move, 1 + isPlayerOne, true);
 
-                    // perform minimax on this new result board
-                    // we get the bubbled-up "best" value possible from this configuration
-                    // and keep the move if's better for this level (depending on min/max)
                     int bv = !isMaxLevel ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
+                    // TODO: store outcome from PlayMove and don't recurse if not necessary
+                    int count = gameManager->GetAICount();
                     Minimax(tmp, bv, currentDepth + 1, maxDepth, !isPlayerOne, !isMaxLevel, alpha, beta);
+
+                    gameManager->SetAICount(count);
 
                     if ((isMaxLevel && bv > boardValue)
                         || (!isMaxLevel && bv < boardValue)

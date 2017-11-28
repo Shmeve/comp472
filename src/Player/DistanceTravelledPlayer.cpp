@@ -3,7 +3,7 @@
 
 int8_t score[2][5] = { {50, 40, 30, 20, 10}, {10, 20, 30, 40, 50} };
 
-int DistanceTravelledPlayer::EvaluateHeuristic(const Board& board)
+int DistanceTravelledPlayer::EvaluateHeuristic(const Board& board, const int& count, const bool& draw, const int& depth)
 {
     int result = 0;
     for (idx_t i = 0; i < BOARD_SIZE; ++i) {
