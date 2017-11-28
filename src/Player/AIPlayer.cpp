@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <list>
+#include <MonteCarloTreeSearch/MCTSState.h>
 
 const int8_t moves[] = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1};
 
@@ -16,7 +17,8 @@ Move AIPlayer::GetMove(Board board, /*out*/ int* value)
 
     // perform minimax
     int boardValue = mIsPlayerOne ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
-    Move move = Minimax(board, boardValue, 1, mDepth, mIsPlayerOne, mIsPlayerOne, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+    //Move move = Minimax(board, boardValue, 1, mDepth, mIsPlayerOne, mIsPlayerOne, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+    Move move = MonteCarlo(board, mIsPlayerOne);
 
     // display e(n) if the move isn't a forfeit
     if (move != Move(0, 0)) {
@@ -93,3 +95,63 @@ Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& c
 
     return bestMove;
 }
+
+Move AIPlayer::RandomMove(const Board &board, const bool& isPlayerOne)
+{
+}
+
+Move AIPlayer::MonteCarlo(const Board &board, const bool& isPlayerOne)
+{
+    auto gameManager = GameManager::GetInstance();
+    bool terminate = false;
+
+    // initialize a best move, default = forfeit
+    Move bestMove;
+
+    // Start Timer
+    time_t start = clock();
+
+    // Root State
+    MCTSState root = MCTSState(board);
+
+
+    while (((clock()-start)/CLOCKS_PER_SEC < TIME_LIMIT) && !terminate) {
+        // Selection
+        MCTSState selection = root;
+
+        while (selection.getChildren()[0] != nullptr) {
+            MCTSState** children = selection.getChildren();
+            double_t bestChildValue = 0;
+            int bestChildIndex = -1;
+
+            // Select best child node
+            for (int i = 0; i < selection.getChildrenCount(); i++) {
+                double_t evaluation = children[i]->UCB();
+
+                if (evaluation > bestChildValue) {
+                    bestChildValue = evaluation;
+                    bestChildIndex = i;
+                }
+            }
+
+            // Evaluate best child
+            if (bestChildIndex == -1) {
+                int choice = rand() % MAX_CHILDREN;
+
+                selection = *selection.getChildren()[choice];
+            }
+            else {
+                selection = *selection.getChildren()[bestChildIndex];
+            }
+        }
+
+        // Expansion
+
+        // Simulation
+
+        // Backpropagation
+    }
+
+    return bestMove;
+}
+

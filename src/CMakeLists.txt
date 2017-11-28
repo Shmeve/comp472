@@ -26,7 +26,7 @@ set(SOURCE_FILES
     UI.cpp
     UI.h
     PlayerFactory.h
-    PlayerFactory.cpp)
+    PlayerFactory.cpp MonteCarloTreeSearch/MCTSState.cpp MonteCarloTreeSearch/MCTSState.h)
 
 # Create the console game executable
 add_executable(comp472 ${SOURCE_FILES})
