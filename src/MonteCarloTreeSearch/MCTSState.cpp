@@ -1,6 +1,7 @@
 #include <cmath>
 #include <GameManager.h>
 #include <cstdlib>
+#include <random>
 #include "MCTSState.h"
 
 const int8_t moves[] = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1};
@@ -10,7 +11,6 @@ MCTSState::MCTSState() : board(board) {
     this->wins = 0;
     this->draws = 0;
     this->loses = 0;
-    this->children = new MCTSState*[MAX_CHILDREN];
     generateMoves();
 }
 
@@ -21,13 +21,13 @@ MCTSState::MCTSState(Board board, bool playerOne, Move move) : board(board) {
     this->draws = 0;
     this->loses = 0;
     this->moveToCurrentState = move;
-    this->children = new MCTSState*[MAX_CHILDREN];
 
     generateMoves();
 }
 
 double MCTSState::UCB() {
-    // TODO: evaluate board
+    // TODO: evaluate board -> should probably consider wins/losses and can integrate some of our heuristics
+        // Heuristic + UCB equation.
     return sqrt((2*abs(log(this->parent->visits)))/this->visits);
 }
 
@@ -63,12 +63,8 @@ int MCTSState::getLoses() const {
     return loses;
 }
 
-MCTSState **MCTSState::getChildren() const {
+const std::vector<MCTSState *> &MCTSState::getChildren() const {
     return children;
-}
-
-int MCTSState::getChildrenCount() const {
-    return childrenCount;
 }
 
 void MCTSState::generateMoves() {
@@ -94,12 +90,36 @@ const std::vector<Move> &MCTSState::getAvailableMoves() const {
 }
 
 Move MCTSState::getRandomMove() {
-    int index = rand() % availableMoves.size();
-    return availableMoves.at(index);
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<double> dist(1.0, (double) availableMoves.size());
+
+    if (dist.b() == 0) {
+        return Move(0,0);
+    } else {
+        unsigned long index = (unsigned int) dist(mt) - 1;
+        return availableMoves.at(index);
+    }
 }
 
 const Board &MCTSState::getBoard() const {
     return board;
+}
+
+void MCTSState::update(int result) {
+    switch (result) {
+        case GameManager::Outcome::Player1Win:
+            win();
+            break;
+        case GameManager::Outcome::Player2Win:
+            lose();
+            break;
+        case GameManager::Outcome::Draw:
+            draw();
+            break;
+        default:
+            break;
+    }
 }
 
 bool MCTSState::isPlayerOne() const {
@@ -107,12 +127,24 @@ bool MCTSState::isPlayerOne() const {
 }
 
 void MCTSState::addChild(MCTSState *child) {
-    children[childrenCount] = child;
-    childrenCount++;
+    child->setParent(this);
+    children.push_back(child);
+}
+
+bool MCTSState::childrenIsFull() {
+    return children.size() < MAX_CHILDREN;
 }
 
 const Move &MCTSState::getMoveToCurrentState() const {
     return moveToCurrentState;
+}
+
+MCTSState *MCTSState::getParent() const {
+    return parent;
+}
+
+void MCTSState::setParent(MCTSState *parent) {
+    MCTSState::parent = parent;
 }
 
 

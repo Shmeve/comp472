@@ -17,6 +17,6 @@ public:
     Move Minimax(const Board& board, /*out*/ int& boardValue, const int& currentDepth, const int& maxDepth, const bool& isPlayerOne, const bool& isMaxLevel, int alpha, int beta);
     Move RandomMove(const Board& board, const bool& isPlayerOne);
     Move MonteCarlo(const Board& board, const bool& isPlayerOne);
-    int simulate(MCTSState node);
+    int simulate(MCTSState* node);
     void MCTSUpperConfidenceBound();
 };

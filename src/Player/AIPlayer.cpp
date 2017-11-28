@@ -3,11 +3,13 @@
 
 #include <limits>
 #include <algorithm>
-
+#include <vector>
 #include <iostream>
 #include <fstream>
 #include <list>
 #include <MonteCarloTreeSearch/MCTSState.h>
+
+using std::vector;
 
 const int8_t moves[] = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1};
 
@@ -112,22 +114,21 @@ Move AIPlayer::MonteCarlo(const Board &board, const bool& isPlayerOne)
     time_t start = clock();
 
     // Root State
-    MCTSState root = MCTSState(board, isPlayerOne, Move(0,0));
-
+    MCTSState* root = new MCTSState(board, isPlayerOne, Move(0,0));
 
     while (((clock()-start)/CLOCKS_PER_SEC < TIME_LIMIT) && !terminate) {
         // Selection
-        MCTSState selection = root;
+        MCTSState* selection = root;
 
-        while (selection.getChildren()[0] != nullptr) {
-            selection.visit();
-            MCTSState** children = selection.getChildren();
-            double_t bestChildValue = 0;
+        while (!selection->getChildren().empty()) {
+            selection->visit();
+            vector<MCTSState*> children = selection->getChildren();
+            double bestChildValue = 0;
             int bestChildIndex = -1;
 
             // Select best child node
-            for (int i = 0; i < selection.getChildrenCount(); i++) {
-                double_t evaluation = children[i]->UCB();
+            for (int i = 0; i < children.size(); i++) {
+                double evaluation = children[i]->UCB();
 
                 if (evaluation > bestChildValue) {
                     bestChildValue = evaluation;
@@ -139,56 +140,65 @@ Move AIPlayer::MonteCarlo(const Board &board, const bool& isPlayerOne)
             if (bestChildIndex == -1) {
                 int choice = rand() % MAX_CHILDREN;
 
-                selection = *selection.getChildren()[choice];
+                selection = selection->getChildren()[choice];
             }
             else {
-                selection = *selection.getChildren()[bestChildIndex];
+                selection = selection->getChildren()[bestChildIndex];
             }
         }
 
-        bestMove = selection.getMoveToCurrentState();
-
         // Expansion
-        if (selection.getAvailableMoves().size() >= MAX_CHILDREN) {
+        if (selection->getAvailableMoves().size() >= MAX_CHILDREN) {
+            // Pick maximum number of random moves
             for (int i = 0; i < MAX_CHILDREN; i++) {
-                Board tmp = selection.getBoard();
-                Move move = selection.getRandomMove();
-                gameManager->PlayMove(tmp, move, 1+selection.isPlayerOne(), true);
-                selection.addChild(new MCTSState(tmp, !selection.isPlayerOne(), move));
+                Board tmp = selection->getBoard();
+                Move move = selection->getRandomMove();
+                gameManager->PlayMove(tmp, move, 1+selection->isPlayerOne(), true);
+                selection->addChild(new MCTSState(tmp, !selection->isPlayerOne(), move));
 
             }
         } else {
-            for (int i = 0;  i < selection.getAvailableMoves().size(); i++) {
-                Board tmp = selection.getBoard();
-                Move move = selection.getAvailableMoves().at(i);
-                gameManager->PlayMove(tmp, move, 1+selection.isPlayerOne(), true);
-                selection.addChild(new MCTSState(tmp, !selection.isPlayerOne(), move));
+            // Pick all available moves
+            for (int i = 0;  i < selection->getAvailableMoves().size(); i++) {
+                Board tmp = selection->getBoard();
+                Move move = selection->getAvailableMoves()[i];
+                gameManager->PlayMove(tmp, move, 1+selection->isPlayerOne(), true);
+                selection->addChild(new MCTSState(tmp, !selection->isPlayerOne(), move));
             }
         }
 
-        // Simulation
-        for (int i = 0; i < selection.getChildrenCount(); i++) {
-            MCTSState node = *selection.getChildren()[i];
+        // Run simulation and backpropagation steps for each child of the selection
+        for (int i = 0; i < selection->getChildren().size(); i++) {
+            // Simulation
+            MCTSState* node = selection->getChildren()[i];
+            int result = simulate(node);
 
-            simulate(node);
+            node->update(result);
+
+            // Backpropagation
+            while (MCTSState* parent = node->getParent()) {
+                parent->update(result);
+                node = parent;
+            }
         }
-
-        // Backpropagation
     }
 
-    return bestMove;
+    // TODO: return best child of root
+    return root->getRandomMove();
 }
 
-int AIPlayer::simulate(MCTSState node)
+// TODO: The issue appears to be coming from the simulation step.
+int AIPlayer::simulate(MCTSState* node)
 {
     auto gameManager = GameManager::GetInstance();
 
-    Move move = node.getRandomMove();
-    Board tmp = node.getBoard();
-    int result = gameManager->PlayMove(tmp, move, 1+node.isPlayerOne(), true);
+    Move move = node->getRandomMove();
+    Board tmp = node->getBoard();
+    int result = gameManager->PlayMove(tmp, move, 1+node->isPlayerOne(), true);
+    MCTSState* child = new MCTSState(tmp, !node->isPlayerOne(), move);
 
     if (result == GameManager::Outcome::None) {
-        node.addChild(new MCTSState(tmp, !node.isPlayerOne(), move));
+        simulate(child);
     } else {
         return result;
     }

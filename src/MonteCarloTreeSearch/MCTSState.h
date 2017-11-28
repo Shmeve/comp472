@@ -13,11 +13,10 @@ protected:
     int wins;
     int draws;
     int loses;
-    int childrenCount;
     MCTSState* parent;
-    Move moveToCurrentState;
+    std::vector<MCTSState*> children; /*TODO: rework children*/
     Board board;
-    MCTSState** children;
+    Move moveToCurrentState;
     std::vector<Move> availableMoves;
 public:
     MCTSState();
@@ -31,16 +30,17 @@ public:
     int getWins() const;
     int getDraws() const;
     int getLoses() const;
-    int getChildrenCount() const;
-    MCTSState **getChildren() const;
+    const std::vector<MCTSState *> &getChildren() const;
     const std::vector<Move> &getAvailableMoves() const;
     Move getRandomMove();
+    void update(int result);
     const Board &getBoard() const;
     bool isPlayerOne() const;
     void addChild(MCTSState* child);
-
+    bool childrenIsFull();
     const Move &getMoveToCurrentState() const;
-
+    MCTSState *getParent() const;
+    void setParent(MCTSState *parent);
 private:
     void generateMoves();
 };
