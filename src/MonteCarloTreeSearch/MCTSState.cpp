@@ -6,21 +6,23 @@
 
 const int8_t moves[] = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1};
 
-MCTSState::MCTSState() : board(board) {
-    this->visits = 0;
-    this->wins = 0;
-    this->draws = 0;
-    this->loses = 0;
-    generateMoves();
-}
+//MCTSState::MCTSState() : board(board) {
+//    this->visits = 0;
+//    this->wins = 0;
+//    this->draws = 0;
+//    this->loses = 0;
+//    this->parent = nullptr;
+//    generateMoves();
+//}
 
-MCTSState::MCTSState(Board board, bool playerOne, Move move) : board(board) {
+MCTSState::MCTSState(Board board, bool playerOne, Move move) : board(board), children(), availableMoves() {
     this->playerOne = playerOne;
     this->visits = 0;
     this->wins = 0;
     this->draws = 0;
     this->loses = 0;
     this->moveToCurrentState = move;
+    this->parent = nullptr;
 
     generateMoves();
 }
@@ -144,7 +146,7 @@ MCTSState *MCTSState::getParent() const {
 }
 
 void MCTSState::setParent(MCTSState *parent) {
-    MCTSState::parent = parent;
+    this->parent = parent;
 }
 
 

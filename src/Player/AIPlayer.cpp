@@ -138,7 +138,7 @@ Move AIPlayer::MonteCarlo(const Board &board, const bool& isPlayerOne)
 
             // Evaluate best child
             if (bestChildIndex == -1) {
-                int choice = rand() % MAX_CHILDREN;
+                int choice = rand() % children.size();
 
                 selection = selection->getChildren()[choice];
             }
@@ -196,6 +196,10 @@ int AIPlayer::simulate(MCTSState* node)
     Board tmp = node->getBoard();
     int result = gameManager->PlayMove(tmp, move, 1+node->isPlayerOne(), true);
     MCTSState* child = new MCTSState(tmp, !node->isPlayerOne(), move);
+
+    if (move == Move(0, 0)) {
+        return node->isPlayerOne() ? GameManager::Outcome::Player2Win : GameManager::Outcome::Player1Win;
+    }
 
     if (result == GameManager::Outcome::None) {
         simulate(child);

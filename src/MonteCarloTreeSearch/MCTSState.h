@@ -19,7 +19,7 @@ protected:
     Move moveToCurrentState;
     std::vector<Move> availableMoves;
 public:
-    MCTSState();
+    //MCTSState();
     MCTSState(Board board, bool playerOne, Move move);
     double UCB();
     void visit();
