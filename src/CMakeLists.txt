@@ -11,6 +11,8 @@ set(SOURCE_FILES
     Player/CellMovesPlayer.h
     Player/CornerCellPlayer.cpp
     Player/CornerCellPlayer.h
+    Player/DistancePlayer.cpp
+    Player/DistancePlayer.h
     GameManager.cpp
     GameManager.h
     Player/HumanPlayer.cpp

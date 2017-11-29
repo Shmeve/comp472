@@ -11,6 +11,7 @@
 #include "Player/RandomPlayer.h"
 #include "Player/BestPathPlayer.h"
 #include "Player/IDontKnowWhatImDoingPlayer.h"
+#include "Player/DistancePlayer.h"
 
 const char* typeHumanPlayer = "Human";
 const char* typeNaivePlayer = "Naive Heuristic (D2)";
@@ -20,6 +21,7 @@ const char* typeCornerCellPlayer = "Corner Cell Player";
 const char* typeRandomPlayer = "Random Player";
 const char* typeBestPathPlayer = "Best Path Player";
 const char* typeIDontKnowWhatImDoingPlayer = "wat";
+const char* typeDistancePlayer = "Distance Player";
 
 const char** PlayerFactory::Options(/*out*/ unsigned int& len)
 {
@@ -31,7 +33,8 @@ const char** PlayerFactory::Options(/*out*/ unsigned int& len)
             /* 4 */ typeCornerCellPlayer,
             /* 5 */ typeRandomPlayer,
             /* 6 */ typeBestPathPlayer,
-            /* 7 */ typeIDontKnowWhatImDoingPlayer
+            /* 7 */ typeIDontKnowWhatImDoingPlayer,
+            /* 8 */ typeDistancePlayer
     };
 
     len = sizeof(opts) / sizeof(char*);
@@ -57,6 +60,8 @@ Player* PlayerFactory::Create(const char* type, const bool& playerOne, const int
         return new BestPathPlayer(playerOne, depth);
     } else if (strcmp(type, typeIDontKnowWhatImDoingPlayer) == 0) {
         return new IDontKnowWhatImDoingPlayer(playerOne, depth);
+    } else if (strcmp(type, typeDistancePlayer) == 0) {
+        return new DistancePlayer(playerOne, depth);
     }
 
     throw std::runtime_error("Invalid player type in PlayerFactory::Create");

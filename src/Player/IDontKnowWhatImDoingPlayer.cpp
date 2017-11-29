@@ -127,19 +127,19 @@ int IDontKnowWhatImDoingPlayer::EvaluateHeuristic(const Board& board)
 
     return (
             100 * greenPiecesLeft +
-            0 * greenPiecesOnBlack +
+            10 * greenPiecesOnBlack +
             0 * greenPossibleMoves +
             0 * greenAttackMoves +
-            0 * greenAttackMaxPiecesEliminated +
+            25 * greenAttackMaxPiecesEliminated +
             0 * greenNoopMoves +
-            0 * greenCornerScore +
+            100 * greenCornerScore +
 
-            0 * redCornerScore +
+            -10 * redCornerScore +
             0 * redNoopMoves +
-            0 * redAttackMaxPiecesEliminated +
-            0 * redAttackMoves +
+            -25 * redAttackMaxPiecesEliminated +
+            -10 * redAttackMoves +
             0 * redPossibleMoves +
-            0 * redPiecesOnBlack +
+            -10 * redPiecesOnBlack +
             -200 * redPiecesLeft +
 
             0
