@@ -5,7 +5,7 @@
 class CornerCellPlayer : public AIPlayer
 {
 public:
-    CornerCellPlayer(const bool& playerOne, const int& depth) : AIPlayer(playerOne, depth) {};
+    CornerCellPlayer(const bool& playerOne, const int& depth, bool minimax) : AIPlayer(playerOne, depth, minimax) {};
 
     virtual int EvaluateHeuristic(const Board& board);
 };

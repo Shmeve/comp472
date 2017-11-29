@@ -6,15 +6,6 @@
 
 const int8_t moves[] = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1};
 
-//MCTSState::MCTSState() : board(board) {
-//    this->visits = 0;
-//    this->wins = 0;
-//    this->draws = 0;
-//    this->loses = 0;
-//    this->parent = nullptr;
-//    generateMoves();
-//}
-
 MCTSState::MCTSState(Board board, bool playerOne, Move move) : board(board), children(), availableMoves() {
     this->playerOne = playerOne;
     this->visits = 0;
@@ -23,14 +14,24 @@ MCTSState::MCTSState(Board board, bool playerOne, Move move) : board(board), chi
     this->loses = 0;
     this->moveToCurrentState = move;
     this->parent = nullptr;
+    this->evaluation = 0;
 
     generateMoves();
 }
 
-double MCTSState::UCB() {
+MCTSState::~MCTSState()
+{
+    int size = this->children.size();
+    for (idx_t i = 0; i < size; ++i) {
+        free(this->children[i]);
+    }
+}
+
+double MCTSState::UCB(const int& heuristicValue) {
     // TODO: evaluate board -> should probably consider wins/losses and can integrate some of our heuristics
         // Heuristic + UCB equation.
-    return sqrt((2*abs(log(this->parent->visits)))/this->visits);
+    this->evaluation = ((double)(((this->playerOne) ? wins - loses : loses - wins) + draws) / (double)(wins + loses + draws)) + heuristicValue + TUNE * sqrt((abs(log(this->parent->visits))) / (double)(this->visits));
+    return evaluation;
 }
 
 void MCTSState::visit() {
@@ -92,16 +93,10 @@ const std::vector<Move> &MCTSState::getAvailableMoves() const {
 }
 
 Move MCTSState::getRandomMove() {
-    std::random_device rd;
-    std::mt19937 mt(rd());
-    std::uniform_real_distribution<double> dist(1.0, (double) availableMoves.size());
-
-    if (dist.b() == 0) {
-        return Move(0,0);
-    } else {
-        unsigned long index = (unsigned int) dist(mt) - 1;
-        return availableMoves.at(index);
-    }
+    if (!availableMoves.empty())
+        return availableMoves.at(rand() % availableMoves.size());
+    else
+        return Move();
 }
 
 const Board &MCTSState::getBoard() const {
@@ -149,4 +144,6 @@ void MCTSState::setParent(MCTSState *parent) {
     this->parent = parent;
 }
 
-
+double MCTSState::getEvaluation() {
+    return this->evaluation;
+}

@@ -52,22 +52,34 @@ int main(int argc, char** argv)
 
     ui->mainMenu();
 
+    unsigned int numTypes;
+    auto player = PlayerFactory::PlayerTypes(numTypes);
+
     unsigned int numOpts;
-    auto opts = PlayerFactory::Options(numOpts);
+    auto search = PlayerFactory::SearchTypes(numOpts);
+
+    auto greenSearchMethod = INT_MAX;
+    auto redSearchMethod = INT_MAX;
 
     if (greenPlayerType < 0) {
-        greenPlayerType = ui->selectPlayer(opts, numOpts, true);
+        greenPlayerType = ui->selectPlayer(player, numTypes, true);
+        if (greenPlayerType != 0) { // AI
+            greenSearchMethod = ui->selectSearchMethod(search, numOpts, true);
+        }
     }
 
     if (redPlayerType < 0) {
-        redPlayerType = ui->selectPlayer(opts, numOpts, false);
+        redPlayerType = ui->selectPlayer(player, numTypes, false);
+        if (redPlayerType != 0) { // AI
+            redSearchMethod = ui->selectSearchMethod(search, numOpts, false);
+        }
     }
 
     ui->startGame();
 
     // Game Setup
-    Player* players[2] = {PlayerFactory::Create(opts[greenPlayerType], true, greenDepth ? greenDepth : depth),
-                          PlayerFactory::Create(opts[redPlayerType], false, redDepth ? redDepth : depth)};
+    Player* players[2] = {PlayerFactory::Create(player[greenPlayerType], true, greenDepth ? greenDepth : depth, (greenSearchMethod == 0)),
+                          PlayerFactory::Create(player[redPlayerType], false, redDepth ? redDepth : depth, (redSearchMethod == 0))};
 
     GameManager* gameManager = GameManager::GetInstance();
     Board gameBoard = Board(true); // TODO: refactor this ui=true parameter

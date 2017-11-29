@@ -5,6 +5,7 @@
 class PlayerFactory
 {
 public:
-    static const char** Options(/*out*/ unsigned int& len);
-    static Player* Create(const char* type, const bool& playerOne, const int& depth);
+    static const char** PlayerTypes(/*out*/ unsigned int& len);
+    static const char** SearchTypes(/*out*/ unsigned int& len);
+    static Player* Create(const char* type, const bool& playerOne, const int& depth, bool minimax);
 };

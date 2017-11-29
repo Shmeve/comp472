@@ -1,5 +1,4 @@
 #include "AIPlayer.h"
-#include "GameManager.h"
 
 #include <limits>
 #include <algorithm>
@@ -8,6 +7,7 @@
 #include <fstream>
 #include <list>
 #include <MonteCarloTreeSearch/MCTSState.h>
+#include <ctime>
 
 using std::vector;
 
@@ -19,8 +19,13 @@ Move AIPlayer::GetMove(Board board, /*out*/ int* value)
 
     // perform minimax
     int boardValue = mIsPlayerOne ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
-    //Move move = Minimax(board, boardValue, 1, mDepth, mIsPlayerOne, mIsPlayerOne, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
-    Move move = MonteCarlo(board, mIsPlayerOne);
+    Move move = Move();
+
+    if (mMiniMax) {
+        move = Minimax(board, boardValue, 1, mDepth, mIsPlayerOne, mIsPlayerOne, std::numeric_limits<int>::min(), std::numeric_limits<int>::max());
+    } else {
+        move = MonteCarlo(board, boardValue, mIsPlayerOne);
+    }
 
     // display e(n) if the move isn't a forfeit
     if (move != Move(0, 0)) {
@@ -100,9 +105,10 @@ Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& c
 
 Move AIPlayer::RandomMove(const Board &board, const bool& isPlayerOne)
 {
+    return Move();
 }
 
-Move AIPlayer::MonteCarlo(const Board &board, const bool& isPlayerOne)
+Move AIPlayer::MonteCarlo(const Board &board, int& boardValue, const bool& isPlayerOne)
 {
     auto gameManager = GameManager::GetInstance();
     bool terminate = false;
@@ -127,8 +133,8 @@ Move AIPlayer::MonteCarlo(const Board &board, const bool& isPlayerOne)
             int bestChildIndex = -1;
 
             // Select best child node
-            for (int i = 0; i < children.size(); i++) {
-                double evaluation = children[i]->UCB();
+            for (idx_t i = 0; i < children.size(); i++) {
+                double evaluation = children[i]->UCB(EvaluateHeuristic(children[i]->getBoard()));
 
                 if (evaluation > bestChildValue) {
                     bestChildValue = evaluation;
@@ -159,7 +165,7 @@ Move AIPlayer::MonteCarlo(const Board &board, const bool& isPlayerOne)
             }
         } else {
             // Pick all available moves
-            for (int i = 0;  i < selection->getAvailableMoves().size(); i++) {
+            for (idx_t i = 0;  i < selection->getAvailableMoves().size(); i++) {
                 Board tmp = selection->getBoard();
                 Move move = selection->getAvailableMoves()[i];
                 gameManager->PlayMove(tmp, move, 1+selection->isPlayerOne(), true);
@@ -168,7 +174,7 @@ Move AIPlayer::MonteCarlo(const Board &board, const bool& isPlayerOne)
         }
 
         // Run simulation and backpropagation steps for each child of the selection
-        for (int i = 0; i < selection->getChildren().size(); i++) {
+        for (idx_t i = 0; i < selection->getChildren().size(); i++) {
             // Simulation
             MCTSState* node = selection->getChildren()[i];
             int result = simulate(node);
@@ -184,28 +190,37 @@ Move AIPlayer::MonteCarlo(const Board &board, const bool& isPlayerOne)
     }
 
     // TODO: return best child of root
-    return root->getRandomMove();
+    std::vector<MCTSState*> children = root->getChildren();
+    MCTSState* bestState = NULL;
+    for (idx_t i = 0; i < children.size(); ++i) {
+        if (!bestState) {
+            bestState = children[i];
+        } else {
+            bestState = (bestState->getEvaluation() > children[i]->getEvaluation()) ? bestState : children[i];
+        }
+    }
+
+    boardValue = bestState->getEvaluation();
+    return bestState->getMoveToCurrentState();
 }
 
-// TODO: The issue appears to be coming from the simulation step.
-int AIPlayer::simulate(MCTSState* node)
+GameManager::Outcome AIPlayer::simulate(MCTSState* node)
 {
     auto gameManager = GameManager::GetInstance();
 
     Move move = node->getRandomMove();
     Board tmp = node->getBoard();
-    int result = gameManager->PlayMove(tmp, move, 1+node->isPlayerOne(), true);
+    auto result = gameManager->PlayMove(tmp, move, 1+node->isPlayerOne(), true);
     MCTSState* child = new MCTSState(tmp, !node->isPlayerOne(), move);
 
     if (move == Move(0, 0)) {
         return node->isPlayerOne() ? GameManager::Outcome::Player2Win : GameManager::Outcome::Player1Win;
     }
 
-    if (result == GameManager::Outcome::None) {
-        simulate(child);
-    } else {
-        return result;
+    while (result == GameManager::Outcome::None) {
+        result = simulate(child);
     }
 
+    return result;
 }
 

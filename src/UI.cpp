@@ -252,6 +252,21 @@ unsigned int UI::selectPlayer(const char** opts, const unsigned int& numOpts, co
     return pickMenuOption(mPlayerSelectWindow, 1, 2, opts, numOpts);
 }
 
+unsigned int UI::selectSearchMethod(const char** opts, const unsigned int& numOpts, const bool& playerOne)
+{
+    mSearchMethodOptionsWindow = createWindow(PLAYER_H, PLAYER_W, PLAYER_Y, PLAYER_X);
+
+    const char* playerName = getPlayerDisplayName(playerOne);
+    const int attr = getPlayerDisplayAttributes(playerOne);
+
+    mvwprintw(mSearchMethodOptionsWindow, 0, 1, "Select AI Search Method for %s", playerName);
+    wattron(mSearchMethodOptionsWindow, attr);
+    mvwaddstr(mSearchMethodOptionsWindow, 0, 29, playerName);
+    wattroff(mSearchMethodOptionsWindow, attr);
+
+    return pickMenuOption(mSearchMethodOptionsWindow, 1, 2, opts, numOpts);
+}
+
 std::string UI::getMove(const bool& playerOne)
 {
     const int attr = getPlayerDisplayAttributes(playerOne);

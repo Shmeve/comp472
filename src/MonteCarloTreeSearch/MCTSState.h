@@ -5,6 +5,7 @@
 #include <Move.h>
 
 #define MAX_CHILDREN 5
+#define TUNE 100
 
 class MCTSState {
 protected:
@@ -18,10 +19,11 @@ protected:
     Board board;
     Move moveToCurrentState;
     std::vector<Move> availableMoves;
+    double evaluation;
 public:
-    //MCTSState();
     MCTSState(Board board, bool playerOne, Move move);
-    double UCB();
+    ~MCTSState();
+    double UCB(const int& heuristicValue);
     void visit();
     void win();
     void draw();
@@ -41,6 +43,7 @@ public:
     const Move &getMoveToCurrentState() const;
     MCTSState *getParent() const;
     void setParent(MCTSState *parent);
+    double getEvaluation();
 private:
     void generateMoves();
 };
