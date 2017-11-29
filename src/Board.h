@@ -23,7 +23,7 @@ public:
     Board& operator=(const Board& other);
     Board& operator=(Board&& other);
 
-    bool IsBlack(const idx_t& idx) const { return idx % 2 == 0; }
+    inline bool IsBlack(const idx_t& idx) const { return idx % 2 == 0; }
     inline int GetCell(const idx_t& idx) const
     {
         if (idx >= BOARD_SIZE) {
