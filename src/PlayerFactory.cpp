@@ -10,24 +10,29 @@
 #include "Player/CornerCellPlayer.h"
 #include "Player/RandomPlayer.h"
 #include "Player/BestPathPlayer.h"
+#include "Player/MOAHPlayer.h"
 
 const char* typeHumanPlayer = "Human";
-const char* typeNaivePlayer = "Naive Heuristic (D2)";
-const char* typeRemainingTilesPlayer = "Remaining Tiles Player";
-const char* typeCellMovesPlayer = "Cell Moves Player";
-const char* typeCornerCellPlayer = "Corner Cell Player";
-const char* typeRandomPlayer = "Random Player";
-const char* typeBestPathPlayer = "Best Path Player";
+const char* typeNaivePlayer = "Naive Heuristic (D2) AI";
+const char* typeRemainingTilesPlayer = "Remaining Tiles AI";
+const char* typeCellMovesPlayer = "Cell Moves AI";
+const char* typeCornerCellPlayer = "Corner Cell AI";
+const char* typeRandomPlayer = "Random AI";
+const char* typeBestPathPlayer = "Best Path AI";
+const char* typeMOAHPlayer = "MOAH AI";
 
 const char** PlayerFactory::Options(/*out*/ unsigned int& len)
 {
-    static const char* opts[] = {typeHumanPlayer,
-                                 typeNaivePlayer,
-                                 typeRemainingTilesPlayer,
-                                 typeCellMovesPlayer,
-                                 typeCornerCellPlayer,
-                                 typeRandomPlayer,
-                                 typeBestPathPlayer};
+    static const char* opts[] = {
+            /* 0 */ typeHumanPlayer,
+            /* 1 */ typeNaivePlayer,
+            /* 2 */ typeRemainingTilesPlayer,
+            /* 3 */ typeCellMovesPlayer,
+            /* 4 */ typeCornerCellPlayer,
+            /* 5 */ typeRandomPlayer,
+            /* 6 */ typeBestPathPlayer,
+            /* 7 */ typeMOAHPlayer
+    };
 
     len = sizeof(opts) / sizeof(char*);
 
@@ -50,6 +55,8 @@ Player* PlayerFactory::Create(const char* type, const bool& playerOne, const int
         return new RandomPlayer(playerOne, depth);
     } else if (strcmp(type, typeBestPathPlayer) == 0) {
         return new BestPathPlayer(playerOne, depth);
+    } else if (strcmp(type, typeMOAHPlayer) == 0) {
+        return new MOAHPlayer(playerOne, depth);
     }
 
     throw std::runtime_error("Invalid player type in PlayerFactory::Create");
