@@ -116,7 +116,7 @@ GameManager::Outcome GameManager::PlayMove(Board& board, const Move& move, int o
     return outcome;
 }
 
-int GameManager::Attack(Board& board, const Move& move, int opponent, bool ai)
+int GameManager::Attack(Board& board, const Move& move, const int& opponent, const bool& ai)
 {
     int direction = move.mEndPos - move.mStartPos;
     int eliminated = 0;

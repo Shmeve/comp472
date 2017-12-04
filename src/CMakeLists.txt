@@ -25,8 +25,8 @@ set(SOURCE_FILES
     Player/RemainingTilesPlayer.cpp
     Player/RemainingTilesPlayer.h
     Player/Player.h
-    Player/IDontKnowWhatImDoingPlayer.cpp
-    Player/IDontKnowWhatImDoingPlayer.h
+    Player/MOAHPlayer.cpp
+    Player/MOAHPlayer.h
     UI.cpp
     UI.h
     PlayerFactory.h
