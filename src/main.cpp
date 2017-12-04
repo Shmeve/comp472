@@ -58,8 +58,8 @@ int main(int argc, char** argv)
     unsigned int numOpts;
     auto search = PlayerFactory::SearchTypes(numOpts);
 
-    auto greenSearchMethod = INT_MAX;
-    auto redSearchMethod = INT_MAX;
+    auto greenSearchMethod = std::numeric_limits<int>::max();
+    auto redSearchMethod = std::numeric_limits<int>::max();
 
     if (greenPlayerType < 0) {
         greenPlayerType = ui->selectPlayer(player, numTypes, true);

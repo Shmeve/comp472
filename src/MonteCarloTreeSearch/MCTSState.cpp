@@ -9,9 +9,9 @@ const int8_t moves[] = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BO
 MCTSState::MCTSState(Board board, bool playerOne, Move move) : board(board), children(), availableMoves() {
     this->playerOne = playerOne;
     this->visits = 0;
-    this->wins = 0;
+    this->player1Wins = 0;
     this->draws = 0;
-    this->loses = 0;
+    this->player2Wins = 0;
     this->moveToCurrentState = move;
     this->parent = nullptr;
     this->evaluation = 0;
@@ -28,9 +28,13 @@ MCTSState::~MCTSState()
 }
 
 double MCTSState::UCB(const int& heuristicValue) {
-    // TODO: evaluate board -> should probably consider wins/losses and can integrate some of our heuristics
-        // Heuristic + UCB equation.
-    this->evaluation = ((double)(((this->playerOne) ? wins - loses : loses - wins) + draws) / (double)(wins + loses + draws)) + heuristicValue + TUNE * sqrt((abs(log(this->parent->visits))) / (double)(this->visits));
+    double gamesPlayed = player1Wins + player2Wins + draws;
+    double v = (((this->playerOne) ? player1Wins : player2Wins) + (draws*0.25))/(gamesPlayed);
+    int C = heuristicValue;
+    int N = this->parent->getVisits();
+    int n = this->visits;
+
+    this->evaluation = (v*C) + TUNE*sqrt(log(N)/n);
     return evaluation;
 }
 
@@ -39,7 +43,7 @@ void MCTSState::visit() {
 }
 
 void MCTSState::win() {
-    wins++;
+    player1Wins++;
 }
 
 void MCTSState::draw() {
@@ -47,7 +51,7 @@ void MCTSState::draw() {
 }
 
 void MCTSState::lose() {
-    loses++;
+    player2Wins++;
 }
 
 int MCTSState::getVisits() const {
@@ -55,7 +59,7 @@ int MCTSState::getVisits() const {
 }
 
 int MCTSState::getWins() const {
-    return wins;
+    return player1Wins;
 }
 
 int MCTSState::getDraws() const {
@@ -63,7 +67,7 @@ int MCTSState::getDraws() const {
 }
 
 int MCTSState::getLoses() const {
-    return loses;
+    return player2Wins;
 }
 
 const std::vector<MCTSState *> &MCTSState::getChildren() const {

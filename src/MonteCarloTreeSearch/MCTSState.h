@@ -5,17 +5,17 @@
 #include <Move.h>
 
 #define MAX_CHILDREN 5
-#define TUNE 100
+#define TUNE 1
 
 class MCTSState {
 protected:
     bool playerOne;
     int visits;
-    int wins;
+    int player1Wins;
     int draws;
-    int loses;
+    int player2Wins;
     MCTSState* parent;
-    std::vector<MCTSState*> children; /*TODO: rework children*/
+    std::vector<MCTSState*> children;
     Board board;
     Move moveToCurrentState;
     std::vector<Move> availableMoves;

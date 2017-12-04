@@ -103,11 +103,6 @@ Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& c
     return bestMove;
 }
 
-Move AIPlayer::RandomMove(const Board &board, const bool& isPlayerOne)
-{
-    return Move();
-}
-
 Move AIPlayer::MonteCarlo(const Board &board, int& boardValue, const bool& isPlayerOne)
 {
     auto gameManager = GameManager::GetInstance();
@@ -174,22 +169,28 @@ Move AIPlayer::MonteCarlo(const Board &board, int& boardValue, const bool& isPla
         }
 
         // Run simulation and backpropagation steps for each child of the selection
-        for (idx_t i = 0; i < selection->getChildren().size(); i++) {
-            // Simulation
-            MCTSState* node = selection->getChildren()[i];
-            int result = simulate(node);
+        for (int i = 0; i < MCTS_SIMULATIONS; i++) {
+            if ((clock()-start)/CLOCKS_PER_SEC < TIME_LIMIT) {
+                break;
+            }
 
-            node->update(result);
+            for (idx_t j = 0; j < selection->getChildren().size(); j++) {
+                // Simulation
+                MCTSState* node = selection->getChildren()[j];
+                int result = simulate(node);
 
-            // Backpropagation
-            while (MCTSState* parent = node->getParent()) {
-                parent->update(result);
-                node = parent;
+                node->update(result);
+
+                // Backpropagation
+                while (MCTSState* parent = node->getParent()) {
+                    parent->update(result);
+                    node = parent;
+                }
             }
         }
     }
 
-    // TODO: return best child of root
+    // Return move of best child of root
     std::vector<MCTSState*> children = root->getChildren();
     MCTSState* bestState = NULL;
     for (idx_t i = 0; i < children.size(); ++i) {
