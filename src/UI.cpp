@@ -223,9 +223,9 @@ void UI::setCell(const int& y, const int& x, const int& val)
      * Print the piece, row by row
      */
 
-    const chtype piece[] = {ACS_ULCORNER, ACS_HLINE, ACS_URCORNER,
-                            ACS_VLINE,    ACS_BLOCK, ACS_VLINE,
-                            ACS_LLCORNER, ACS_HLINE, ACS_LRCORNER};
+    const chtype piece[] = {ACS_ULCORNER, ACS_HLINE,       ACS_URCORNER,
+                            ACS_VLINE,    ' ' | A_REVERSE, ACS_VLINE,
+                            ACS_LLCORNER, ACS_HLINE,       ACS_LRCORNER};
 
     int dy = y * 3 + BOARD_B;
     int dx = x * 3 + BOARD_B;
@@ -250,6 +250,21 @@ unsigned int UI::selectPlayer(const char** opts, const unsigned int& numOpts, co
     wattroff(mPlayerSelectWindow, attr);
 
     return pickMenuOption(mPlayerSelectWindow, 1, 2, opts, numOpts);
+}
+
+unsigned int UI::selectSearchMethod(const char** opts, const unsigned int& numOpts, const bool& playerOne)
+{
+    mSearchMethodOptionsWindow = createWindow(PLAYER_H, PLAYER_W, PLAYER_Y, PLAYER_X);
+
+    const char* playerName = getPlayerDisplayName(playerOne);
+    const int attr = getPlayerDisplayAttributes(playerOne);
+
+    mvwprintw(mSearchMethodOptionsWindow, 0, 1, "Select AI Search Method for %s", playerName);
+    wattron(mSearchMethodOptionsWindow, attr);
+    mvwaddstr(mSearchMethodOptionsWindow, 0, 29, playerName);
+    wattroff(mSearchMethodOptionsWindow, attr);
+
+    return pickMenuOption(mSearchMethodOptionsWindow, 1, 2, opts, numOpts);
 }
 
 std::string UI::getMove(const bool& playerOne)
@@ -361,10 +376,12 @@ void UI::log(const bool& playerOne, const Move& move, const int& value)
 
         // print e(n) if applicable
         wmove(mLogWindow, getcury(mLogWindow), getcurx(mLogWindow) + 1);
-        if (tValue != std::numeric_limits<int>::min()) {
-            wprintw(mLogWindow, "%-6i", tValue);
+        if (tValue == std::numeric_limits<int>::min()) {
+            wprintw(mLogWindow, "%-6s", "min");
+        } else if (tValue == std::numeric_limits<int>::max()) {
+            wprintw(mLogWindow, "%-6s", "max");
         } else {
-            wprintw(mLogWindow, "%6c", ' ');
+            wprintw(mLogWindow, "%-6i", tValue);
         }
 
         wmove(mLogWindow, getcury(mLogWindow) + 1, LOG_B);

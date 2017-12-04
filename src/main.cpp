@@ -3,35 +3,83 @@
 #include <stdexcept>
 #include <string.h>
 #include <limits>
+#include <time.h>
+#include <cxxopts/cxxopts.hpp>
 
 #include "UI.h"
 #include "GameManager.h"
 #include "PlayerFactory.h"
 #include "Player/HumanPlayer.h"
 
+#define DEFAULT_DEPTH 6
+
 int main(int argc, char** argv)
 {
+    cxxopts::Options options("Armadillo", "Team 11 - Bonzee");
+
+    int greenPlayerType = -1;
+    int redPlayerType = -1;
+    int depth = DEFAULT_DEPTH;
+    int greenDepth = 0;
+    int redDepth = 0;
+
+    options.add_options()
+            ("h,help", "Help")
+            ("w,wait", "Wait for debugger to attach")
+            ("g,green", "Green player type", cxxopts::value(greenPlayerType))
+            ("r,red", "Red player type", cxxopts::value(redPlayerType))
+            ("d,depth", "Tree search depth for both players (shortcut)", cxxopts::value(depth))
+            ("G,greendepth", "Tree search depth for Red player", cxxopts::value(greenDepth))
+            ("R,reddepth", "Tree search depth for Green player", cxxopts::value(redDepth))
+            ;
+
+    options.parse(argc, argv);
+
     // wait to attach debugger
-    if (argc > 1 && strncmp(argv[1], "--wait", 6) == 0) {
+    if (options["wait"].as<bool>()) {
         getchar();
     }
+
+    if (options["help"].as<bool>()) {
+        std::cout << options.help();
+        return 0;
+    }
+
+    srand((unsigned int)time(nullptr));
 
     UI* ui = UI::getInstance();
     ui->init();
 
     ui->mainMenu();
 
-    unsigned int numOpts;
-    auto opts = PlayerFactory::Options(numOpts);
+    unsigned int numTypes;
+    auto player = PlayerFactory::PlayerTypes(numTypes);
 
-    auto greenPlayerType = ui->selectPlayer(opts, numOpts, true);
-    auto redPlayerType = ui->selectPlayer(opts, numOpts, false);
+    unsigned int numOpts;
+    auto search = PlayerFactory::SearchTypes(numOpts);
+
+    auto greenSearchMethod = std::numeric_limits<int>::max();
+    auto redSearchMethod = std::numeric_limits<int>::max();
+
+    if (greenPlayerType < 0) {
+        greenPlayerType = ui->selectPlayer(player, numTypes, true);
+        if (greenPlayerType != 0) { // AI
+            greenSearchMethod = ui->selectSearchMethod(search, numOpts, true);
+        }
+    }
+
+    if (redPlayerType < 0) {
+        redPlayerType = ui->selectPlayer(player, numTypes, false);
+        if (redPlayerType != 0) { // AI
+            redSearchMethod = ui->selectSearchMethod(search, numOpts, false);
+        }
+    }
 
     ui->startGame();
 
     // Game Setup
-    Player* players[2] = {PlayerFactory::Create(opts[greenPlayerType], true),
-                          PlayerFactory::Create(opts[redPlayerType], false)};
+    Player* players[2] = {PlayerFactory::Create(player[greenPlayerType], true, greenDepth ? greenDepth : depth, (greenSearchMethod == 0)),
+                          PlayerFactory::Create(player[redPlayerType], false, redDepth ? redDepth : depth, (redSearchMethod == 0))};
 
     GameManager* gameManager = GameManager::GetInstance();
     Board gameBoard = Board(true); // TODO: refactor this ui=true parameter

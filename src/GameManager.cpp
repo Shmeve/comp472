@@ -50,7 +50,7 @@ GameManager::Outcome GameManager::EvaluateWinningCondition()
     return outcome;
 }
 
-bool GameManager::IsValidMove(Board& board, const Move& move, bool playerOne)
+bool GameManager::IsValidMove(const Board& board, const Move& move, const bool& playerOne) const
 {
     // Check if start and end are on board
     if (move.mStartPos >= BOARD_SIZE || move.mEndPos >= BOARD_SIZE) {
@@ -116,7 +116,7 @@ GameManager::Outcome GameManager::PlayMove(Board& board, const Move& move, int o
     return outcome;
 }
 
-void GameManager::Attack(Board& board, const Move& move, int opponent, bool ai)
+int GameManager::Attack(Board& board, const Move& move, const int& opponent, const bool& ai)
 {
     int direction = move.mEndPos - move.mStartPos;
     int eliminated = 0;
@@ -143,6 +143,8 @@ void GameManager::Attack(Board& board, const Move& move, int opponent, bool ai)
             mConsecutiveNoAttack++;
         }
     }
+
+    return eliminated;
 }
 
 int GameManager::Eliminate(Board& board, int currentPos, int direction, int opponent, bool ai)

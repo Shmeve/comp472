@@ -1,4 +1,4 @@
-# COMP 472 - Deliverable 2
+# COMP 472 - Deliverable 3
 
 Team #4 - ProjectArmadillo
 
@@ -11,9 +11,25 @@ Steve Ferreira, 27477546
 
 Section: Fall 2017 - F
 
-Date: November 6, 2017
+Date: December 4, 2017
 
 We certify that this submission is the original work of members of the group and meets the Faculty's Expectations of Originality.
+
+## Usage
+
+```
+Team 11 - Bonzee
+Usage:
+  Armadillo [OPTION...]
+
+  -h, --help            Help
+  -w, --wait            Wait for debugger to attach
+  -g, --green arg       Green player type
+  -r, --red arg         Red player type
+  -d, --depth arg       Tree search depth for both players (shortcut)
+  -G, --greendepth arg  Tree search depth for Red player
+  -R, --reddepth arg    Tree search depth for Green player
+```
 
 ## Compilation instructions
 
