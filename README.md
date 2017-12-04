@@ -1,4 +1,4 @@
-# COMP 472 - Deliverable 2
+# COMP 472 - Deliverable 3
 
 Team #4 - ProjectArmadillo
 
@@ -11,7 +11,7 @@ Steve Ferreira, 27477546
 
 Section: Fall 2017 - F
 
-Date: November 6, 2017
+Date: December 4, 2017
 
 We certify that this submission is the original work of members of the group and meets the Faculty's Expectations of Originality.
 

@@ -11,7 +11,7 @@
 
 using std::vector;
 
-const int8_t moves[] = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1};
+const int moves[] = {-BOARD_COLS - 1, -BOARD_COLS, -BOARD_COLS + 1, -1, 1, BOARD_COLS - 1, BOARD_COLS, BOARD_COLS + 1};
 
 Move AIPlayer::GetMove(Board board, /*out*/ int* value)
 {
@@ -58,22 +58,34 @@ Move AIPlayer::Minimax(const Board& board, /*out*/ int& boardValue, const int& c
         // for all current player's tokens...
         if (board.GetCell(k) == 2 - isPlayerOne) {
             // for every possible move...
-            for (int8_t i : moves) {
+            for (const auto& i : moves) {
                 Move move = Move(k, k + i);
 
                 // we'll check if this move is legit
                 if (gameManager->IsValidMove(board, move, isPlayerOne)) {
                     // if it is, simulate it with a copy of the board
                     Board tmp = board;
-                    gameManager->PlayMove(tmp, move, 1 + isPlayerOne, true);
-
-                    // TODO: store outcome from PlayMove and don't recurse if not necessary
+                    auto outcome = gameManager->PlayMove(tmp, move, 1 + isPlayerOne, true);
 
                     // perform minimax on this new result board
                     // we get the bubbled-up "best" value possible from this configuration
                     // and keep the move if's better for this level (depending on min/max)
-                    int bv = !isMaxLevel ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
-                    Minimax(tmp, bv, currentDepth + 1, maxDepth, !isPlayerOne, !isMaxLevel, alpha, beta);
+                    int bv;
+                    switch (outcome) {
+                        case GameManager::Outcome::Player1Win:
+                            bv = std::numeric_limits<int>::max() - currentDepth;
+                            break;
+                        case GameManager::Outcome::Player2Win:
+                            bv = std::numeric_limits<int>::min() + currentDepth;
+                            break;
+                        case GameManager::Outcome::Draw:
+                            bv = 0;
+                            break;
+                        default:
+                            bv = !isMaxLevel ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
+                            Minimax(tmp, bv, currentDepth + 1, maxDepth, !isPlayerOne, !isMaxLevel, alpha, beta);
+                            break;
+                    }
 
                     if ((isMaxLevel && bv > boardValue)
                         || (!isMaxLevel && bv < boardValue)

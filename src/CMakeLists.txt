@@ -11,6 +11,8 @@ set(SOURCE_FILES
     Player/CellMovesPlayer.h
     Player/CornerCellPlayer.cpp
     Player/CornerCellPlayer.h
+    Player/DistancePlayer.cpp
+    Player/DistancePlayer.h
     GameManager.cpp
     GameManager.h
     Player/HumanPlayer.cpp
@@ -18,11 +20,17 @@ set(SOURCE_FILES
     Move.h
     Player/NaivePlayer.cpp
     Player/NaivePlayer.h
+    Player/NeighborPlayer.cpp
+    Player/NeighborPlayer.h
+    Player/OthelloPlayer.cpp
+    Player/OthelloPlayer.h
     Player/RandomPlayer.cpp
     Player/RandomPlayer.h
     Player/RemainingTilesPlayer.cpp
     Player/RemainingTilesPlayer.h
     Player/Player.h
+    Player/MOAHPlayer.cpp
+    Player/MOAHPlayer.h
     UI.cpp
     UI.h
     PlayerFactory.h
