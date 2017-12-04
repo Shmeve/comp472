@@ -12,7 +12,7 @@
 #include "Player/BestPathPlayer.h"
 #include "Player/MOAHPlayer.h"
 #include "Player/OthelloPlayer.h"
-#include "Player/DistanceTravelledPlayer.h"
+#include "Player/DistancePlayer.h"
 #include "Player/NeighborPlayer.h"
 
 const char* typeHumanPlayer = "Human";
@@ -24,7 +24,7 @@ const char* typeRandomPlayer = "Random AI";
 const char* typeBestPathPlayer = "Best Path AI";
 const char* typeMOAHPlayer = "MOAH AI";
 const char* typeOthelloPlayer = "Othello AI";
-const char* typeDistanceTravelledPlayer = "Distance Travelled AI";
+const char* typeDistanceTravelledPlayer = "Distance AI";
 const char* typeNeighborPlayer = "Neighbor AI";
 
 const char** PlayerFactory::Options(/*out*/ unsigned int& len)
@@ -69,7 +69,7 @@ Player* PlayerFactory::Create(const char* type, const bool& playerOne, const int
     } else if (strcmp(type, typeOthelloPlayer) == 0) {
         return new OthelloPlayer(playerOne, depth);
     } else if (strcmp(type, typeDistanceTravelledPlayer) == 0) {
-        return new DistanceTravelledPlayer(playerOne, depth);
+        return new DistancePlayer(playerOne, depth);
     } else if (strcmp(type, typeNeighborPlayer) == 0) {
         return new NeighborPlayer(playerOne, depth);
     }

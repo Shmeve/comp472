@@ -20,6 +20,10 @@ set(SOURCE_FILES
     Move.h
     Player/NaivePlayer.cpp
     Player/NaivePlayer.h
+    Player/NeighborPlayer.cpp
+    Player/NeighborPlayer.h
+    Player/OthelloPlayer.cpp
+    Player/OthelloPlayer.h
     Player/RandomPlayer.cpp
     Player/RandomPlayer.h
     Player/RemainingTilesPlayer.cpp
